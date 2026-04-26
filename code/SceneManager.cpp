@@ -6,9 +6,6 @@
 // Initialize SceneManager using info from this game's renderer and game.config
 void SceneManager::initialize(Renderer &renderer, GameSetup &game_config) {
 
-	// Initialize the reference to the image manager
-	image_data = renderer.get_image_manager();
-
 	// Initialize the template manager
 	template_manager.initialize();
 
@@ -57,16 +54,33 @@ void SceneManager::update_actors() {
 	for (std::shared_ptr<Actor> &actor : actor_list) actor->process_add_components();
 
 	// Execute OnUpdate lifecycle functions
-	for (std::shared_ptr<Actor> &actor : actor_list) actor->call_lifecycle_function("OnUpdate");
+	for (std::shared_ptr<Actor> &actor : actor_list) {
+
+		// If the scene has switched after this, don't do anymore
+		if (!new_scene.empty()) break;
+
+		actor->call_lifecycle_function("OnUpdate");
+
+	}
 
 	// Done with all updates, now process late updates...
-	for (std::shared_ptr<Actor> &actor : actor_list) actor->call_lifecycle_function("OnLateUpdate");
+	for (std::shared_ptr<Actor> &actor : actor_list) {
+
+		// If the scene has switched after this, don't do anymore
+		if (!new_scene.empty()) break;
+
+		actor->call_lifecycle_function("OnLateUpdate");
+
+	}
 
 	// Now process any pending components to be removed
 	for (std::shared_ptr<Actor> &actor : actor_list) actor->process_remove_components();
 
 	// Finally, process and pending actors to be removed
 	process_pending_remove_actors();
+
+	// If we've switched scenes, finalize that now
+	if (!new_scene.empty()) switch_scene(new_scene);
 
 }
 
@@ -86,6 +100,9 @@ void SceneManager::process_pending_add_actors() {
 		// Inject references of the actor to its components
 		actor->inject_references();
 
+		// Enable all of its components
+		actor->set_enable_all(true);
+
 		// Call its OnStart lifecycle function
 		actor->call_lifecycle_function("OnStart");
 
@@ -104,9 +121,6 @@ void SceneManager::process_pending_remove_actors() {
 
 	// Go through and remove...
 	for (std::shared_ptr<Actor> actor : actors_to_remove) {
-
-		// Call its OnDestroy lifecycle functions
-		actor->call_lifecycle_function("OnDestroy");
 
 		// Find and remove it from the list...
 		for (int i = 0; i < actor_list.size(); i++) {
@@ -136,6 +150,9 @@ void SceneManager::switch_scene(const std::string &scene_name) {
 
 	// Clear all actors
 	actor_list.clear();
+
+	// Flush all loaded components
+	ComponentManager::flush_loaded_comps();
 
 	// Create a rapidJSON document to read in scene data
 	rapidjson::Document scene_data;
@@ -170,13 +187,10 @@ void SceneManager::switch_scene(const std::string &scene_name) {
 		}
 
 		// Initialize (additional) info for this actor
-		new_actor.initialize(actor_array, i, actor_id_counter);
+		new_actor.initialize(actor_array, i, actor_id_counter++);
 
 		// All done! Put the actor into the list
 		actor_list.push_back(std::make_shared<Actor>(new_actor));
-
-		// Increment id counter
-		actor_id_counter++;
 
 	}
 
@@ -190,5 +204,11 @@ void SceneManager::switch_scene(const std::string &scene_name) {
 		actor->call_lifecycle_function("OnStart");
 
 	}
+
+	// Update scene name
+	current_scene = scene_name;
+
+	// Reset switch scene
+	new_scene = "";
 
 }

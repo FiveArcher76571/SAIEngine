@@ -147,7 +147,10 @@ public:
 			// Find and remove from alphabetical sorted list
 			for (int i = 0; i < alphabetical_components.size(); i++) {
 
-				if (comp == alphabetical_components[i]) alphabetical_components.erase(alphabetical_components.begin() + i);
+				if (comp == alphabetical_components[i]) {
+					alphabetical_components.erase(alphabetical_components.begin() + i);
+					break;
+				}
 
 			}
 
@@ -157,6 +160,20 @@ public:
 		components_to_remove.clear();
 
 	}
+
+	// Toggle enable on all components
+	void set_enable_all(const bool &enable) {
+
+		for (const std::string &comp_name : alphabetical_components) {
+
+			(*components[comp_name].ref)["enabled"] = enable;
+
+		}
+
+	}
+
+	// Flush all components (before scene switch/actor deletion)
+	void flush_components();
 
 	/////
 	///// Lua-exposed functions

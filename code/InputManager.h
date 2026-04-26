@@ -8,6 +8,7 @@
 
 #include "SDL3/SDL.h"
 #include "glm/glm.hpp"
+#include "fluidsynth.h"
 #include "keycode_to_scancode.h"
 
 enum class InputState {
@@ -44,7 +45,15 @@ class InputManager {
 
 	// List of mouse buttons that were released this frame
 	static inline std::vector<int> mouse_up_this_frame;
-	
+
+	// MIDI button list [0, 127] and their current states
+	static inline std::unordered_map<int, InputState> midi_states;
+
+	// List of MIDI keys that were pressed down this frame
+	static inline std::vector<int> midi_down_this_frame;
+
+	// List of MIDI keys that were released this frame
+	static inline std::vector<int> midi_up_this_frame;
 
 public:
 
@@ -53,6 +62,18 @@ public:
 
 	// Update key states at the beginning of frame
 	static void update_states_bof(const SDL_Event &input);
+
+	// Callback function to update MIDI controller states
+	static void update_states_midi(const void *data, const fluid_midi_event_t *event) {
+
+		// Get the key number pressed
+		int key_pressed = fluid_midi_event_get_key(event);
+
+		// Update state in map
+		midi_states[key_pressed] = InputState::KEY_JUST_DOWN;
+
+
+	}
 
 	// Update key states at the end of frame
 	static void update_states_eof();

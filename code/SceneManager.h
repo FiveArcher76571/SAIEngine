@@ -14,7 +14,6 @@
 #include "ComponentManager.h"
 #include "TemplateManager.h"
 #include "Renderer.h"
-#include "ImageManager.h"
 #include "JSONReader.h"
 #include "LuaManager.h"
 
@@ -37,11 +36,14 @@ class SceneManager {
 	// Template manager to store actor templates for this game
 	static inline TemplateManager template_manager;
 
-	// This game's ImageManager
-	ImageManager *image_data = nullptr;
-
 	// Actor ID counter
 	static inline int actor_id_counter = 0;
+
+	// Current scene name
+	static inline std::string current_scene = "";
+
+	// Scene to switch to (no switch if blank)
+	static inline std::string new_scene = "";
 
 public:
 
@@ -104,21 +106,15 @@ public:
 	// Instantiate a new Actor into this scene
 	static Actor *InstantiateActor(const std::string &template_name) {
 
-		// Create a template reference actor
-		Actor template_actor;
-
-		// Assign the template to it...
-		// If the template doesn't exist, throw an error and exit
-		if (!template_manager.check_and_assign_template(template_name, template_actor)) {
-			std::cout << "error: template " << template_name << " is missing";
-			exit(0);
-		}
-
 		// Create a new blank actor
 		Actor new_actor;
 
-		// Initialize it with the template actor
-		new_actor.initialize(template_actor);
+		// Assign the template to it...
+		// If the template doesn't exist, throw an error and exit
+		if (!template_manager.check_and_assign_template(template_name, new_actor)) {
+			std::cout << "error: template " << template_name << " is missing";
+			exit(0);
+		}
 
 		// Assign its ID
 		new_actor.id = actor_id_counter++;
@@ -145,12 +141,11 @@ public:
 			// If we've found it, time to destroy
 			if (actor->id == to_destroy.id) {
 
+				// Call its OnDestroy lifecycle function
+				actor->call_lifecycle_function("OnDestroy");
+
 				// Disable all of its components
-				for (auto component : actor->components) {
-
-					(*component.second.ref)["enabled"] = false;
-
-				}
+				actor->flush_components();
 
 				// Put it in the to-remove list
 				actors_to_remove.insert(actor);
@@ -167,9 +162,32 @@ public:
 	//////
 	////// Scene-related functions
 	//////
+
+	// Get the current scene name
+	static std::string GetCurrentScene() {
+
+		return current_scene;
+
+	}
+
+	// Trigger scene switch
+	static void TriggerSceneSwitch(const std::string &scene_name) {
+
+		// Go throug every actor in the list...
+		for (std::shared_ptr<Actor> actor : actor_list) {
+
+			// Flush its components
+			actor->flush_components();
+
+		}
+
+		// Set the scene switch name
+		new_scene = scene_name;
+
+	}
 	
 	// Switch to the given scene and update camera if necessary
-	void switch_scene(const std::string &scene_name);
+	static void switch_scene(const std::string &scene_name);
 
 };
 

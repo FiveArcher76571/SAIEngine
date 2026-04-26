@@ -52,8 +52,8 @@ public:
 	// Initialize the engine
 	void initialize();
 
-	// Gameplay update and render actions
-	void gameplay_update_and_render();
+	// Gameplay update actions
+	void gameplay_update();
 
 	// Switch the gameplay scene, taking care of cleanup
 	void switch_gameplay_scene(const std::string &scene_name);

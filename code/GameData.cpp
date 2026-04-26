@@ -34,6 +34,22 @@ void GameData::initialize() {
 		.addFunction("GetFrame", &EngineTools::GetFrameNumber)
 		.endNamespace();
 
+	// Window details
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginNamespace("Window")
+		.addFunction("GetWidth", &Renderer::get_window_width)
+		.addFunction("GetHeight", &Renderer::get_window_height)
+		.endNamespace();
+
+	// Camera functions
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginNamespace("Camera")
+		.addFunction("SetPosition", &Renderer::SetCameraPos)
+		.addFunction("GetPosition", &Renderer::get_camera_pos)
+		.addFunction("SetZoom", &Renderer::set_zoom)
+		.addFunction("GetZoom", &Renderer::GetZoomFactor)
+		.endNamespace();
+
 	// Add Debug logging functionality
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Debug")
@@ -98,9 +114,22 @@ void GameData::initialize() {
 		.addFunction("SendKeyOff", &AudioManager::MIDI_SendKeyOff)
 		.endNamespace();
 
+	// Image draws
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginNamespace("Image")
+		.addFunction("DrawUI", &Renderer::DrawUI)
+		.addFunction("DrawUIEx", &Renderer::DrawUIEx)
+		.addFunction("Draw", &Renderer::Draw)
+		.addFunction("DrawEx", &Renderer::DrawEx)
+		.addFunction("DrawPixel", &Renderer::DrawPixel)
+		.endNamespace();
 
-	// Initialize the scene manager
-	scene_manager.initialize(renderer, config_data);
+	// Scene switching
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginNamespace("Scene")
+		.addFunction("Switch", &SceneManager::TriggerSceneSwitch)
+		.addFunction("GetName", &SceneManager::GetCurrentScene)
+		.endNamespace();
 
 	// Initialize the audio manager
 	audio_manager.initialize();
@@ -111,11 +140,14 @@ void GameData::initialize() {
 	// Initialize input manager
 	input_manager.initialize();
 
+	// Initialize the scene manager
+	scene_manager.initialize(renderer, config_data);
+
 	// Done with init stuff!
 }
 
-// Gameplay update and render actions
-void GameData::gameplay_update_and_render() {
+// Gameplay update actions
+void GameData::gameplay_update() {
 
 	// Don't do anything if no actors have been defined
 	if (scene_manager.get_actor_list()->empty()) return;
@@ -123,25 +155,16 @@ void GameData::gameplay_update_and_render() {
 	// Update the actors in the scene (every frame)
 	scene_manager.update_actors();
 
-	// Done with updates, now start rendering!
-
-	// Clear the render
-	renderer.clear_render();
+	// Done with updates!
 
 }
 
 // Switch the gameplay scene, taking care of cleanup
 void GameData::switch_gameplay_scene(const std::string &scene_name) {
 
-	// Get the new camera position
-	glm::vec2 new_camera_pos = { 0.0f, 0.0f };
-
 	// Switch the scene in the scene manager
 	// This updates the new camera position
 	scene_manager.switch_scene(scene_name);
-
-	// Update the camera in the renderer
-	renderer.set_camera_pos(new_camera_pos, false);
 
 	// Clear the render
 	renderer.clear_render();
@@ -171,16 +194,22 @@ void GameData::start() {
 
 		}
 
-		// Do update and render actions
-		gameplay_update_and_render();
+		// Do update actions
+		gameplay_update();
 
-		// Process any text render requests
+		// Clear the render
+		renderer.clear_render();
+
+		// Process any pending requests in defined order
+		renderer.copy_queued_images();
+		renderer.copy_queued_UI();
 		renderer.copy_queued_text();
-
-		// At the end of the frame, present the render
-		renderer.present_render();
+		renderer.copy_queued_pixels();
 
 		// End of frame...
+
+		// Present the render
+		renderer.present_render();
 
 		// Update frame count
 		EngineTools::UpdateFrame();

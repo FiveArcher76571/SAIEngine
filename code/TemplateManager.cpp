@@ -54,7 +54,7 @@ bool TemplateManager::check_and_assign_template(const std::string &template_name
 	if (template_list.find(template_name) == template_list.end()) return false;
 
 	// Otherwise, assign and return true
-	actor = template_list.at(template_name);
+	actor.initialize(template_list.at(template_name));
 	return true;
 
 }

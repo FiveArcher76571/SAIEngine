@@ -3,16 +3,9 @@
 
 #include "ImageManager.h"
 
-// Initialize the stored renderer pointer
-void ImageManager::initialize(SDL_Renderer *game_renderer) {
-
-	renderer = game_renderer;
-
-}
-
 // Searches for and creates an Image object of the filename given
 // If it has already been cached, return a pointer to that instead
-Image *ImageManager::get_image(const std::string &filename) {
+Image *ImageManager::get_image(const std::string &filename, SDL_Renderer *renderer) {
 
 	// First, check if the image has already been cached...
 	if (images.find(filename) != images.end()) {

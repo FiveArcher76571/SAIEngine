@@ -144,11 +144,24 @@ void Actor::initialize(const Actor &to_copy) {
 		// Establish the new instance's inheritance
 		ComponentManager::establish_inheritance(*new_ref, *base_ref);
 
-		// Add the key to the instance
-		(*new_ref)["key"] = (*to_copy.components.at(key_to_copy).ref)["key"];
+		// Copy over all the parameters from the template's components
+		for (const auto &pair : luabridge::pairs(*to_copy.components.at(key_to_copy).ref)) {
 
-		// Add enabled flag to the instance, initialize to false
-		(*new_ref)["enabled"] = false;
+			(*new_ref)[pair.first] = pair.second;
+
+		}
+
+		// Add the key to the instance (replaces if already read in above)
+		new_ref->push(LuaManager::get_lua_state());
+		lua_pushstring(LuaManager::get_lua_state(), "key");
+		lua_pushstring(LuaManager::get_lua_state(), (*to_copy.components.at(key_to_copy).ref)["key"].cast<std::string>().c_str());
+		lua_rawset(LuaManager::get_lua_state(), -3);
+
+		// Add enabled flag to the instance, initialize to false (replaces if already read in above)
+		lua_pushstring(LuaManager::get_lua_state(), "enabled");
+		lua_pushboolean(LuaManager::get_lua_state(), false);
+		lua_rawset(LuaManager::get_lua_state(), -3);
+		lua_pop(LuaManager::get_lua_state(), 1);
 
 		// Store the component to our lists
 		components.insert({ key_to_copy, { to_copy.components.at(key_to_copy).type, new_ref } });
@@ -177,6 +190,9 @@ void Actor::call_lifecycle_function(const std::string &function_name) {
 	// Go through components alphabetically...
 	for (std::string &key : alphabetical_components) {
 
+		// If this component was removed, skip it
+		if (components_to_remove.find(key) != components_to_remove.end()) continue;
+
 		// Get the stored reference
 		luabridge::LuaRef &component = *components[key].ref;
 
@@ -192,6 +208,21 @@ void Actor::call_lifecycle_function(const std::string &function_name) {
 			}
 
 		}
+
+	}
+
+}
+
+// Flush all components (before scene switch/actor deletion)
+void Actor::flush_components() {
+
+	// Add all the components to the deletion list
+	for (auto &comp : components) {
+
+		// Disable the component
+		(*comp.second.ref)["enabled"] = false;
+
+		components_to_remove.insert(comp.first);
 
 	}
 

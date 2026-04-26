@@ -54,7 +54,7 @@ public:
 		// Create the shared pointer
 		std::shared_ptr<luabridge::LuaRef> new_ref = std::make_shared<luabridge::LuaRef>(luabridge::getGlobal(LuaManager::get_lua_state(), component.c_str()));
 
-		// Store it and return true
+		// Store it and return
 		component_list.insert({ component, new_ref });
 		return new_ref;
 
@@ -84,6 +84,13 @@ public:
 	static int get_add_component_calls() {
 
 		return add_component_calls++;
+
+	}
+
+	// Flush loaded component list (e.g. on scene change)
+	static void flush_loaded_comps() {
+
+		component_list.clear();
 
 	}
 

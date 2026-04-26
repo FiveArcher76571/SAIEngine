@@ -7,11 +7,15 @@
 void AudioManager::initialize() {
 
 	// Initialize SDL_mixer
-	MIX_Init();
+	if (!MIX_Init()) {
+
+		std::cout << "Error when calling MIX_Init()\n" << SDL_GetError();
+		exit(0);
+
+	}
 
 	// Open the audio device to begin
 	mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
-
 	if (mixer == nullptr) {
 
 		// If we couldn't open the audio device, throw an error
@@ -19,6 +23,9 @@ void AudioManager::initialize() {
 		exit(0);
 
 	}
+
+	// Initialize tracks to play audio on
+	tracks.resize(50, nullptr);
 
 }
 
@@ -45,11 +52,17 @@ MIX_Audio *AudioManager::load_audio_file(const std::string &filename) {
 		// Now we know the file exists...
 
 		// Check the file extension for .wav or .ogg, and update the filename acordingly
-		std::string full_file = filename;
+		std::string full_file = "resources/audio/" + filename;
 		full_file += std::filesystem::exists("resources/audio/" + filename + ".wav") ? ".wav" : ".ogg";
 
 		// Load the audio file into the intro BGM Mix_Chunk pointer
-		new_audio = MIX_LoadAudio(mixer, ("resources/audio/" + full_file).c_str(), true);
+		new_audio = MIX_LoadAudio(mixer, full_file.c_str(), false);
+
+		// Check for errors
+		if (new_audio == nullptr) {
+			std::cout << "Error: failed to load audio file " << filename << "\n" << SDL_GetError();
+			exit(0);
+		}
 
 	}
 
@@ -67,12 +80,39 @@ MIX_Audio *AudioManager::load_audio_file(const std::string &filename) {
 void AudioManager::Play(const int &channel, const std::string &trackname, const bool &loop) {
 
 	// Load in the given file (if not already)
-	MIX_Audio *track = load_audio_file(trackname);
+	MIX_Audio *audio = load_audio_file(trackname);
 
 	// Play the file with given parameters
 	int loops = loop ? -1 : 0;
 
-	MIX_PlayAudio(mixer, track);
+	// If the channel given isn't defined (over 50, under 0), throw an error
+	if (channel >= 50 || channel < 0) {
+
+		std::cout << "Error: there are only 50 channels, defined from [0,50)";
+		exit(0);
+
+	}
+
+	// Check if track has been defined, and initialize it if not
+	if (tracks.at(channel) == nullptr) {
+
+		tracks.at(channel) = MIX_CreateTrack(mixer);
+		if (tracks.at(channel) == nullptr) {
+
+			std::cout << "error: unable to create MIX_Track at channel " << channel;
+			exit(0);
+
+		}
+
+	}
+
+	MIX_SetTrackAudio(tracks.at(channel), audio);
+
+	SDL_PropertiesID options = SDL_CreateProperties();
+
+	SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, loops);
+
+	MIX_PlayTrack(tracks.at(channel), options);
 
 	//AudioHelper::Mix_PlayChannel(channel, audio_assets.at(trackname), loops);
 

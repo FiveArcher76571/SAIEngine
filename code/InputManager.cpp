@@ -20,11 +20,17 @@ void InputManager::initialize() {
 
 	}
 
+	// Do the same for the MIDI keys
+	for (int midi_key = 0; midi_key < 128; midi_key++) {
+
+		midi_states[midi_key] = InputState::KEY_UP;
+
+	}
+
 }
 
 // Update key states at the beginning of frame
 void InputManager::update_states_bof(const SDL_Event &input) {
-
 
 	// Update key state if it's down this frame
 	if (input.type == SDL_EVENT_KEY_DOWN) {

@@ -35,6 +35,9 @@ class AudioManager {
 	// Mixer
 	static inline MIX_Mixer *mixer;
 
+	// List of mixer tracks
+	static inline std::vector<MIX_Track*> tracks;
+
 	// Audio Mix_Chunk storage
 	static inline std::unordered_map<std::string, MIX_Audio*> audio_assets;
 
