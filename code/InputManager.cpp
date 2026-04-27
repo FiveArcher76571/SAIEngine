@@ -20,10 +20,11 @@ void InputManager::initialize() {
 
 	}
 
-	// Do the same for the MIDI keys
+	// Do the same for the MIDI keys, including velocities
 	for (int midi_key = 0; midi_key < 128; midi_key++) {
 
 		midi_states[midi_key] = InputState::KEY_UP;
+		midi_velocities[midi_key] = 0;
 
 	}
 
@@ -127,6 +128,23 @@ void InputManager::update_states_eof() {
 	// Reset scroll wheel delta
 	mouse_scroll_delta = 0.0f;
 
+	// MIDI
+	for (const int &midi_key : midi_down_this_frame) {
+
+		midi_states[midi_key] = InputState::KEY_DOWN;
+
+	}
+
+	midi_down_this_frame.clear();
+
+	for (const int &midi_key : midi_up_this_frame) {
+
+		midi_states[midi_key] = InputState::KEY_UP;
+
+	}
+
+	midi_up_this_frame.clear();
+
 }
 
 /////
@@ -169,6 +187,25 @@ bool InputManager::GetKeyDown(const std::string &keycode) {
 bool InputManager::GetKeyUp(const std::string &keycode) {
 
 	return __keycode_to_scancode.find(keycode) == __keycode_to_scancode.end() ? false : key_released(__keycode_to_scancode.at(keycode));
+
+}
+
+// MIDI key checkers
+bool InputManager::GetMIDI(const int &key) {
+
+	return midi_states.find(key) == midi_states.end() ? false : midi_states[key] == InputState::KEY_DOWN || midi_states[key] == InputState::KEY_JUST_DOWN;
+
+}
+
+bool InputManager::GetMIDIDown(const int &key) {
+
+	return midi_states.find(key) == midi_states.end() ? false : midi_states[key] == InputState::KEY_JUST_DOWN;
+
+}
+
+bool InputManager::GetMIDIUp(const int &key) {
+
+	return midi_states.find(key) == midi_states.end() ? false : midi_states[key] == InputState::KEY_JUST_UP;
 
 }
 

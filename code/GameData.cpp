@@ -67,9 +67,13 @@ void GameData::initialize() {
 	// Add Input namespace and functions
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Input")
+		.addFunction("EnableMIDIControl", &AudioManager::MIDI_EnableRoutingAsInput)
 		.addFunction("GetKey", &InputManager::GetKey)
 		.addFunction("GetKeyDown", &InputManager::GetKeyDown)
 		.addFunction("GetKeyUp", &InputManager::GetKeyUp)
+		.addFunction("GetMIDI", &InputManager::GetMIDI)
+		.addFunction("GetMIDIDown", &InputManager::GetMIDIDown)
+		.addFunction("GetMIDIUp", &InputManager::GetMIDIUp)
 		.addFunction("GetMousePosition", &InputManager::get_mouse_pos)
 		.addFunction("GetMouseButton", &InputManager::mouse_down)
 		.addFunction("GetMouseButtonDown", &InputManager::mouse_pressed)

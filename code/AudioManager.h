@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <filesystem>
 #include "GameSetup.h"
+#include "InputManager.h"
 
 #include "fluidsynth.h"
 #include "SDL_mixer/SDL_mixer.h"
@@ -141,6 +142,19 @@ public:
 		// Set up MIDI router and create MIDI driver
 		midi_router = new_fluid_midi_router(settings, fluid_synth_handle_midi_event, synth);
 		midi_driver = new_fluid_midi_driver(settings, fluid_midi_router_handle_midi_event, midi_router);
+
+	}
+
+	// Enable MIDI controller routing to input manager
+	// To be called at OnStart()
+	static void MIDI_EnableRoutingAsInput() {
+
+		// Configure MIDI driver for Windows (winmidi)
+		fluid_settings_setstr(settings, "midi.driver", "winmidi");
+
+		// Set up MIDI router and create MIDI driver
+		midi_router = new_fluid_midi_router(settings, fluid_synth_handle_midi_event, synth);
+		midi_driver = new_fluid_midi_driver(settings, InputManager::update_states_midi, midi_router);
 
 	}
 
