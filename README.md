@@ -10,6 +10,13 @@ A minimalist 2D game engine with robust audio playback and synthesis
 - Uses FluidSynth for MIDI playback/controller support and SoundFont support
 - Is kinda cool I think
 
+## Usage Instructions
+To use my engine, simply [download the latest compiled binary here](https://github.com/FiveArcher76571/SAIEngine/releases/latest) or build it yourself (see below). Once you do that do the following...
+- Create assets, components, and scenes in a `resources` folder, placed next to the executable
+- Run the executable
+- ...
+- Profit (if you wanna)!
+
 ## Build Instructions
 The files are all there for you to add to your workflow as you please! However, I also provide a (cobbled together) CMake file for you to use. Simply run `cmake .` in your desired terminal and watch it do its magic!
 
