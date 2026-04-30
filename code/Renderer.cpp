@@ -156,7 +156,9 @@ void Renderer::copy_queued_images() {
 		final_render_pos.h *= abs_scale.y;
 
 		// Scale pivot point
-		SDL_FPoint scaled_pivot = { static_cast<int>(req.pivot.x * abs_scale.x), static_cast<int>(req.pivot.y * abs_scale.y) };
+		int pivot_x = static_cast<int>(req.pivot.x * abs_scale.x);
+		int pivot_y = static_cast<int>(req.pivot.y * abs_scale.y);
+		SDL_FPoint scaled_pivot = { static_cast<float>(pivot_x), static_cast<float>(pivot_y) };
 
 		// Translate final position based on all factors (given in spec)
 		final_render_pos.x = static_cast<int>(final_render_pos.x * PPM + window.rect.w * 0.5f * (1.0f / camera.zoom) - scaled_pivot.x);

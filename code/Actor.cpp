@@ -70,7 +70,7 @@ void Actor::initialize(const rapidjson::Value &actor_data, const rapidjson::Size
 				for (auto property = comp->value.MemberBegin(); property != comp->value.MemberEnd(); property++) {
 
 					// If we're at the "type" property skip it
-					if (property->name.GetString() == "type") continue;
+					if (strcmp(property->name.GetString(), "type") == 0) continue;
 
 					// Re-assign the property based on its type in the base component...
 					if (base_ref[property->name.GetString()].isBool()) comp_ref[property->name.GetString()] = property->value.GetBool();
