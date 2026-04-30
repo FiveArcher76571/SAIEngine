@@ -1,6 +1,12 @@
 # Engine-related files/folders
+
+# Resources
 resources/
+
+# Builds/Executables
 SAIEngine
+*.tar.xz
+*.zip
 
 # Prerequisites
 *.d
