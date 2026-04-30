@@ -166,8 +166,25 @@ public:
 	// To be called at OnStart()
 	static void MIDI_EnableRoutingAsInput() {
 
-		// Configure MIDI driver for Windows (winmidi)
+		// Windows (winmidi)
+#if defined _WIN32
+
+		// Configure MIDI driver
 		fluid_settings_setstr(settings, "midi.driver", "winmidi");
+
+// OSX (jack)
+#elif defined __APPLE__
+
+		// Configure MIDI driver
+		fluid_settings_setstr(settings, "midi.driver", "jack");
+
+// Linux (alsa_seq)
+#else
+
+		// Configure MIDI driver
+		fluid_settings_setstr(settings, "midi.driver", "alsa_seq");
+
+#endif
 
 		// Set up MIDI router and create MIDI driver
 		midi_router = new_fluid_midi_router(settings, fluid_synth_handle_midi_event, synth);
