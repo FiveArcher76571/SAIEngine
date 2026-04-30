@@ -8,6 +8,7 @@ A minimalist 2D game engine with robust audio playback and synthesis
 - Uses SDL3 for rendering, input, image/text handling
 - Uses GLM for efficient vector math
 - Uses FluidSynth for MIDI playback/controller support and SoundFont support
+- Compatible with Windows and Linux systems
 - Is kinda cool I think
 
 ## Usage Instructions
@@ -21,4 +22,4 @@ To use my engine, simply [download the latest compiled binary here](https://gith
 The files are all there for you to add to your workflow as you please! However, I also provide a (cobbled together) CMake file for you to use. Simply run `cmake .` in your desired terminal and watch it do its magic!
 
 ### Note on CMake
-As of April 28th 2026, I've only made my `CMakeLists.txt` file to work with Windows (specifically tested with Visual Studio 2022). I plan to add macOS and Linux support soon, but for now sorry for the inconvenience!
+As of April 29th 2026, I've only made my `CMakeLists.txt` file to work with Windows (specifically tested with Visual Studio 2022) and Linux (tested with Debian 13). I plan to add macOS support soon, but for now sorry for the inconvenience!
