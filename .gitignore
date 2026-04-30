@@ -1,3 +1,7 @@
+# Engine-related files/folders
+resources/
+SAIEngine
+
 # Prerequisites
 *.d
 

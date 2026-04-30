@@ -9,11 +9,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_language(C)
 
 # C++ compiler
-set(CMAKE_C_COMPILER "cl.exe")
-set(CMAKE_CXX_COMPILER "cl.exe")
 
-# Suppress deprecation warnings and add optimization O3
-add_compile_options(/O2 /wd4996)
+# MSVC for Windows
+if (WIN32)
+
+    set(CMAKE_C_COMPILER "cl.exe")
+    set(CMAKE_CXX_COMPILER "cl.exe")
+
+    # Suppress deprecation warnings and add optimization O3
+    add_compile_options(/O2 /wd4996)
+
+endif(WIN32)
+
+# Clang for Linux
+if (UNIX)
+
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+
+    # Suppress deprecation warnings and add optimization O3
+    add_compile_options(-O3 -Wno-deprecated-declarations)
+
+endif (UNIX)
 
 # My source files
 file(GLOB CPP_SOURCE "code/*.cpp")
@@ -42,21 +59,37 @@ include_directories(lua_5.4.6/inc/)
 add_executable(SAIEngine ${CPP_SOURCE} ${LUA_SOURCE})
 
 # Get the libraries needed
-target_link_libraries(SAIEngine
+
+# Define directories
+target_link_directories(SAIEngine
     PRIVATE
-    libraries/SDL3/SDL3
-    libraries/SDL3_image/SDL3_image
-    libraries/SDL3_mixer/SDL3_mixer
-    libraries/SDL3_ttf/SDL3_ttf
-    libraries/libfluidsynth-3
+    libraries/SDL3
+    libraries/SDL3_image
+    libraries/SDL3_mixer
+    libraries/SDL3_ttf
+    libraries/FluidSynth
 )
 
-# Copy over DLLs to build directory
-file(GLOB DLL_FILES "libraries/_dll/*.dll")
-foreach(DLL ${DLL_FILES})
-    add_custom_command(TARGET SAIEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${DLL}" 
-        $<TARGET_FILE_DIR:SAIEngine>
-    )
-endforeach()
+
+target_link_libraries(SAIEngine
+    PRIVATE
+    SDL3
+    SDL3_image
+    SDL3_mixer
+    SDL3_ttf
+    fluidsynth
+)
+
+# Copy over DLLs to build directory (Windows)
+if (WIN32)
+
+    file(GLOB DLL_FILES "libraries/_dll/*.dll")
+    foreach(DLL ${DLL_FILES})
+        add_custom_command(TARGET SAIEngine POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL}" 
+            $<TARGET_FILE_DIR:SAIEngine>
+        )
+    endforeach()
+    
+endif (WIN32)
