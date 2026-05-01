@@ -115,7 +115,7 @@ if (WIN32)
     endforeach()
 endif (WIN32)
 
-# Add build data to build to an app (OSX only)
+# Add build data to build to an app, and create executable script to launch with resources dir (OSX only)
 if (APPLE)
     set_target_properties(SAIEngine PROPERTIES
         MACOSX_BUNDLE TRUE
@@ -124,4 +124,10 @@ if (APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3"
         MACOSX_BUNDLE_COPYRIGHT "Saicharan Vemuri"
     )
+    file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/Run_SAIEngine.sh"
+        "#!/bin/bash\n"
+        "cd \"$(dirname \"$0\")\"\n"
+        "./MyApp\n"
+    )
+    execute_process(COMMAND chmod +x "${CMAKE_CURRENT_SOURCE_DIR}/Run_SAIEngine.sh")
 endif ()
