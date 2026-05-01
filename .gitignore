@@ -1,3 +1,6 @@
+# Mac-related files
+.DS_Store
+
 # Engine-related files/folders
 
 # Resources
@@ -5,8 +8,10 @@ resources/
 
 # Builds/Executables
 SAIEngine
+SAIEngine.*
 *.tar.xz
 *.zip
+build/
 
 # Prerequisites
 *.d
