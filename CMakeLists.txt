@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.17)
 project(SAIEngine)
 
 # C++ standard
@@ -123,5 +123,6 @@ if (APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "0.3"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3"
         MACOSX_BUNDLE_COPYRIGHT "Saicharan Vemuri"
+        XCODE_SCHEME_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 endif ()

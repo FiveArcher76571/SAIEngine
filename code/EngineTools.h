@@ -10,6 +10,8 @@
 #include "lua.hpp"
 #include "LuaBridge.h"
 
+#include <mach-o/dyld.h>
+
 // EngineTools class
 class EngineTools {
 
@@ -96,6 +98,29 @@ public:
 	static inline void UpdateFrame() {
 
 		frame_number++;
+
+	}
+
+	// Returns the current working directory (from which resources can be accessed)
+	// Mac needs a different setup to actually get the resources folder
+	static inline std::string GetWorkingPath() {
+
+// Mac-specific filesystem things
+#if defined __APPLE__
+
+		// Get the full absolute path of the current app bundle, stored in executable_path
+		char executable_path[PATH_MAX];
+		uint32_t size = sizeof(executable_path);
+		_NSGetExecutablePath(executable_path, &size);
+
+		std::cout << executable_path << std::endl;
+
+		return std::string(executable_path);
+
+#endif
+
+		// For all other platforms, get it from filesystem
+		return std::filesystem::current_path().string();
 
 	}
 
