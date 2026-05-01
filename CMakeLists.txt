@@ -124,10 +124,4 @@ if (APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.3"
         MACOSX_BUNDLE_COPYRIGHT "Saicharan Vemuri"
     )
-    file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/Run_SAIEngine.sh"
-        "#!/bin/bash\n"
-        "cd \"$(dirname \"$0\")\"\n"
-        "./MyApp\n"
-    )
-    execute_process(COMMAND chmod +x "${CMAKE_CURRENT_SOURCE_DIR}/Run_SAIEngine.sh")
 endif ()
