@@ -115,7 +115,7 @@ if (WIN32)
     endforeach()
 endif (WIN32)
 
-# Add build data to build to an app, and create executable script to launch with resources dir (OSX only)
+# Add build data to build to an app (OSX only)
 if (APPLE)
     set_target_properties(SAIEngine PROPERTIES
         MACOSX_BUNDLE TRUE
