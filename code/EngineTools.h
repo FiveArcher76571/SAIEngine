@@ -10,8 +10,6 @@
 #include "lua.hpp"
 #include "LuaBridge.h"
 
-#include <mach-o/dyld.h>
-
 // EngineTools class
 class EngineTools {
 
