@@ -283,6 +283,33 @@ public:
 
 	}
 
+	// Get the currently playing MIDI file's tempo in BPM (according to FluidSynth)
+	static int MIDI_GetBPM() {
+
+		// Check if anything is playing, and return -1 if not
+		if (fluid_player_get_status(MIDIplayer) != fluid_player_status::FLUID_PLAYER_PLAYING) return -1;
+
+		// Otherwise, return the BPM
+		return fluid_player_get_bpm(MIDIplayer);		
+
+	}
+
+	// Set the currently playing MIDI file's tempo in BPM
+	static void MIDI_SetBPM(const int &new_tempo) {
+
+		// Call the FluidSynth function
+		fluid_player_set_bpm(MIDIplayer, new_tempo);
+
+	}
+
+	// Get the currently playing MIDI track's current (tempo) tick
+	static int MIDI_GetCurrentTick() {
+
+		// Call the FluidSynth function
+		return fluid_player_get_current_tick(MIDIplayer);
+
+	}
+
 	// Set reverb level to the current MIDI track
 	// Takes in a level parameter, if 0 turns reverb off
 	// Level is a float between 0 and 1 inclusive
