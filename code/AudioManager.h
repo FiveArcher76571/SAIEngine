@@ -20,14 +20,14 @@ struct LoopPoint {
 	// Loop start (in ticks/beats)
 	int start_tick = -1;
 
-	// Loop start (in seconds)
-	float start_sec = -1.0f;
+	// Loop start (in milliseconds)
+	int64_t start_ms = -1;
 
 	// Loop end (in ticks/beats)
 	int end_tick = -1;
 
-	// Loop end (in seconds)
-	float end_sec = -1.0f;
+	// Loop end (in milliseconds)
+	int64_t end_ms = -1;
 
 };
 
@@ -70,8 +70,14 @@ class AudioManager {
 	// Apply changes on frame 1 as well (right after OnStart())
 	static inline bool changes = true;
 
-	// Loop point tracker
-	static inline LoopPoint loop;
+	// MIDI loop point tracker
+	static inline LoopPoint midi_loop;
+
+	// Loop point trackers (for rendered audio)
+	static inline std::vector<LoopPoint> rendered_loop_points;
+
+	// Track BPMs (for rendered audio)
+	static inline std::vector<int> track_bpm;
 
 public:
 
@@ -98,20 +104,47 @@ public:
 
 		// Apply always...
 
-		// Only do loop logic if it has been set (not -1)...
-		if (loop.end_tick > -1) {
+		// Check loop points for the MIDI track
+		// Only do tick loop logic if it has been set (not -1)...
+		if (midi_loop.end_tick > -1) {
 
 			// Check our current position in the track...
 			int current_tick = fluid_player_get_current_tick(MIDIplayer);
 
 			// Check if we're past the end tick
-			if (current_tick >= loop.end_tick) {
+			if (current_tick >= midi_loop.end_tick) {
 
 				// If a start tick is defined, go there
 				// Otherwise, go to the start of the track
-				int dest_tick = loop.start_tick > -1 ? loop.start_tick : 0;
+				int dest_tick = midi_loop.start_tick > -1 ? midi_loop.start_tick : 0;
 				fluid_player_seek(MIDIplayer, dest_tick);
 
+			}
+
+		}
+
+		// For every rendered track, check loop points...
+		for (int i = 0; i < rendered_loop_points.size(); i++) {
+
+			// The current channel to look at
+			LoopPoint &loop = rendered_loop_points.at(i);
+
+			// Only do seconds loop logic if it has been set (not -1)
+			if (loop.end_ms > -1) {
+
+				// Check our current position in the track (in ms)
+				int64_t current_pos = MIX_TrackFramesToMS(tracks.at(i), MIX_GetTrackPlaybackPosition(tracks.at(i)));
+
+				// Check if we're past the end point
+				if (current_pos >= loop.end_ms) {
+
+					// If a start position is defined, go there
+					// Otherwise, go to the start of the track
+					int64_t dest_pos = loop.start_ms > -1 ? loop.start_ms : 0;
+					MIX_SetTrackPlaybackPosition(tracks.at(i), MIX_TrackMSToFrames(tracks.at(i), dest_pos));
+
+				}
+				
 			}
 
 		}
@@ -198,11 +231,36 @@ public:
 	// Play/loop given audio in the given channel with/without looping
 	static void Play(const int &channel, const std::string &trackname, const bool &loop);
 
-	// Halt the given audio channel
-	static void Halt(const int &channel);
+	// Pause the given channel
+	static void Pause(const int &channel);
 
-	// Set the given channel's volume
-	static void SetVolume(const int &channel, const int &volume);
+	// Pause the whole mixer (all tracks)
+	static void PauseAll();
+
+	// Resume the given channel
+	static void Resume(const int &channel);
+
+	// Resume the whole mixer (all tracks)
+	static void ResumeAll();
+
+	// Set the given channel's gain
+	static void SetGain(const int &channel, const int &new_gain);
+
+	// Set custom loop points for the given channel (in ms)
+	static void SetLoopPoints(const int &channel, const int64_t &start_pos, const int64_t end_pos);
+
+	// Reset (remove) loop points for the given channel
+	static void ResetLoopPoints(const int &channel);
+
+	// Set the BPM for the given channel
+	static void SetBPM(const int &channel, const int &new_bpm);
+
+	// Get the BPM for the given channel
+	static int GetBPM(const int &channel);
+
+	/////
+	///// MIDI Functions
+	/////
 
 	// Load a MIDI file from resources/audio
 	static void MIDI_LoadMIDI(const std::string &filename) {
@@ -371,8 +429,8 @@ public:
 	static void MIDI_SetLoopPoints(const int &start_tick, const int &end_tick) {
 
 		// Update loop point object
-		loop.start_tick = start_tick;
-		loop.end_tick = end_tick;
+		midi_loop.start_tick = start_tick;
+		midi_loop.end_tick = end_tick;
 
 	}
 
@@ -381,8 +439,8 @@ public:
 	static void MIDI_ResetLoopPoints() {
 
 		// Set both to -1
-		loop.start_tick = -1;
-		loop.end_tick = -1;
+		midi_loop.start_tick = -1;
+		midi_loop.end_tick = -1;
 
 	}
 

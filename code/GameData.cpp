@@ -95,8 +95,15 @@ void GameData::initialize() {
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("RAudio")
 		.addFunction("Play", &AudioManager::Play)
-		.addFunction("Halt", &AudioManager::Halt)
-		.addFunction("SetVolume", &AudioManager::SetVolume)
+		.addFunction("Pause", &AudioManager::Pause)
+		.addFunction("PauseAll", &AudioManager::PauseAll)
+		.addFunction("Resume", &AudioManager::Resume)
+		.addFunction("ResumeAll", &AudioManager::ResumeAll)
+		.addFunction("SetGain", &AudioManager::SetGain)
+		.addFunction("SetLoopPoints", &AudioManager::SetLoopPoints)
+		.addFunction("ResetLoopPoints", &AudioManager::ResetLoopPoints)
+		.addFunction("SetBPM", &AudioManager::SetBPM)
+		.addFunction("GetBPM", &AudioManager::GetBPM)
 		.endNamespace();
 
 	// Synthesized Audio

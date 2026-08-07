@@ -24,8 +24,10 @@ void AudioManager::initialize() {
 
 	}
 
-	// Initialize tracks to play audio on
+	// Initialize vectors for number of tracks
 	tracks.resize(50, nullptr);
+	rendered_loop_points.resize(50);
+	track_bpm.resize(50, -1);
 
 }
 
@@ -114,20 +116,69 @@ void AudioManager::Play(const int &channel, const std::string &trackname, const 
 
 	MIX_PlayTrack(tracks.at(channel), options);
 
-	//AudioHelper::Mix_PlayChannel(channel, audio_assets.at(trackname), loops);
+}
+
+// Pause the given channel
+void AudioManager::Pause(const int &channel) {
+
+	MIX_PauseTrack(tracks.at(channel));
 
 }
 
-// Halt the given audio channel
-void AudioManager::Halt(const int &channel) {
+// Pause the whole mixer (all tracks)
+void AudioManager::PauseAll() {
 
-	//AudioHelper::Mix_HaltChannel(channel);
+	MIX_PauseAllTracks(mixer);
 
 }
 
-// Set the given channel's volume
-void AudioManager::SetVolume(const int &channel, const int &volume) {
+// Resume the given channel
+void AudioManager::Resume(const int &channel) {
 
-	//AudioHelper::Mix_Volume(channel, volume);
+	MIX_ResumeTrack(tracks.at(channel));
+
+}
+
+// Resume the whole mixer (all tracks)
+void AudioManager::ResumeAll() {
+
+	MIX_ResumeAllTracks(mixer);
+
+}
+
+// Set the given channel's gain
+void AudioManager::SetGain(const int &channel, const int &new_gain) {
+
+	MIX_SetTrackGain(tracks.at(channel), new_gain);
+
+}
+
+// Set custom loop points for the given channel (in ms)
+void AudioManager::SetLoopPoints(const int &channel, const int64_t &start_pos, const int64_t end_pos) {
+
+	rendered_loop_points.at(channel).start_ms = start_pos;
+	rendered_loop_points.at(channel).end_ms = end_pos;
+
+}
+
+// Reset (remove) loop points for the given channel
+void AudioManager::ResetLoopPoints(const int &channel) {
+
+	rendered_loop_points.at(channel).start_ms = -1;
+	rendered_loop_points.at(channel).end_ms = -1;
+
+}
+
+// Set the BPM for the given channel
+void AudioManager::SetBPM(const int &channel, const int &new_bpm) {
+
+	track_bpm.at(channel) = new_bpm;
+
+}
+
+// Get the BPM for the given channel
+int AudioManager::GetBPM(const int &channel) {
+
+	return track_bpm.at(channel);
 
 }
