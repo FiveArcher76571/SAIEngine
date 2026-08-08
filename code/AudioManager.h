@@ -267,6 +267,9 @@ public:
 	// Get the measure length of the given channel
 	static int GetMeasureLength(const int &channel);
 
+	// Checks if the given channel has reached the start of a new measure (plus or minus the given buffer in ms)
+	static bool IsOnBeat(const int &channel, const int64_t &buffer);
+
 	/////
 	///// MIDI Functions
 	/////

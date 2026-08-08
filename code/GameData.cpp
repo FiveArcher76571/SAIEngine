@@ -104,6 +104,9 @@ void GameData::initialize() {
 		.addFunction("ResetLoopPoints", &AudioManager::ResetLoopPoints)
 		.addFunction("SetBPM", &AudioManager::SetBPM)
 		.addFunction("GetBPM", &AudioManager::GetBPM)
+		.addFunction("SetMeasureLength", &AudioManager::SetMeasureLength)
+		.addFunction("GetMeasureLength", &AudioManager::GetMeasureLength)
+		.addFunction("IsOnBeat", &AudioManager::IsOnBeat)
 		.endNamespace();
 
 	// Synthesized Audio

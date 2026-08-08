@@ -198,3 +198,23 @@ int AudioManager::GetMeasureLength(const int &channel) {
 
 }
 
+// Checks if the given channel has reached the start of a new measure (plus or minus the given buffer in ms)
+bool AudioManager::IsOnBeat(const int &channel, const int64_t &buffer) {
+
+	// If neither BPM nor measure length has been set for this channel, return false
+	if (!(track_bpm.at(channel) > -1 && measure_lengths.at(channel) > 0)) return false;
+
+	// Get the current position of the track's audio in ms
+	int64_t current_pos = MIX_TrackFramesToMS(tracks.at(channel), MIX_GetTrackPlaybackPosition(tracks.at(channel)));
+
+	// Calculate the measure length in ms
+	// (60,000ms <1 min> * measure length ms) / BPM
+	int measure_length = (60000 * measure_lengths.at(channel)) / track_bpm.at(channel);
+
+	// Get the distance between the current position and the most recent measure (current_pos % measure_length)
+	int distance = current_pos % measure_length;
+
+	// Return true if the distance is less than the given buffer amt (current pos within boundary)
+	return (distance >= buffer) ? true : false;
+
+}
