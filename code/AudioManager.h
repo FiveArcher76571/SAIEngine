@@ -79,6 +79,9 @@ class AudioManager {
 	// Track BPMs (for rendered audio)
 	static inline std::vector<int> track_bpm;
 
+	// Measure lengths of each track in rendered audio
+	static inline std::vector<int> measure_lengths;
+
 public:
 
 	// Load the intro BGM if it is defined in game.config
@@ -257,6 +260,12 @@ public:
 
 	// Get the BPM for the given channel
 	static int GetBPM(const int &channel);
+
+	// Set a measure length for the given channel
+	static void SetMeasureLength(const int &channel, const int &length);
+
+	// Get the measure length of the given channel
+	static int GetMeasureLength(const int &channel);
 
 	/////
 	///// MIDI Functions

@@ -28,6 +28,7 @@ void AudioManager::initialize() {
 	tracks.resize(50, nullptr);
 	rendered_loop_points.resize(50);
 	track_bpm.resize(50, -1);
+	measure_lengths.resize(50, 0);
 
 }
 
@@ -182,3 +183,18 @@ int AudioManager::GetBPM(const int &channel) {
 	return track_bpm.at(channel);
 
 }
+
+// Set a measure length for the given channel
+void AudioManager::SetMeasureLength(const int &channel, const int &length) {
+
+	measure_lengths.at(channel) = length;
+
+}
+
+// Get the measure length of the given channel
+int AudioManager::GetMeasureLength(const int &channel) {
+
+	return measure_lengths.at(channel);
+
+}
+
