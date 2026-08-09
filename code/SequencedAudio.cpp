@@ -3,6 +3,45 @@
 
 #include "SequencedAudio.h"
 
+// Update loop
+void SequencedAudio::update() {
+
+    // Only apply if there are pending changes...
+    if (changes) {
+
+        // Update volumes
+        for (int channel = 0; channel < 16; channel++) {
+
+            fluid_synth_cc(synth, channel, 7, channel_volumes[channel]);
+
+        }
+
+        // Reset flag
+        changes = false;
+
+    }
+
+    // Check loop points for the MIDI track
+    // Only do tick loop logic if it has been set (not -1)...
+    if (loop.end > -1) {
+
+        // Check our current position in the track...
+        int current_tick = fluid_player_get_current_tick(player);
+
+        // Check if we're past the end tick
+        if (current_tick >= loop.end) {
+
+            // If a start tick is defined, go there
+            // Otherwise, go to the start of the track
+            int dest_tick = loop.start > -1 ? loop.start : 0;
+            fluid_player_seek(player, dest_tick);
+
+        }
+
+    }
+
+}
+
 // Enable MIDI playback with soundfonts
 void SequencedAudio::Enable() {
 
