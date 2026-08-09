@@ -122,6 +122,9 @@ public:
 	static int GetMeasureLength(const int &channel);
 
 	// Checks if the given channel has reached the start of a new measure (plus or minus the given buffer in ms)
-	static bool IsOnBeat(const int &channel, const int64_t &buffer);
+	static bool IsNewMeasure(const int &channel, const int &buffer);
+
+	// Checks if the given channel has begun a new beat on this frame (plus or minus the given buffer in ms)
+	static bool IsOnBeat(const int &channel, const int &buffer);
 
 };

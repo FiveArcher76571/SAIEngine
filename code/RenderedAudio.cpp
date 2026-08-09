@@ -37,7 +37,7 @@ void RenderedAudio::update() {
 
                 // If a start position is defined, go there
                 // Otherwise, go to the start of the track
-                int64_t dest_pos = loop.start > -1 ? loop.start : 0;
+                int dest_pos = loop.start > -1 ? loop.start : 0;
                 MIX_SetTrackPlaybackPosition(tracks.at(i), MIX_TrackMSToFrames(tracks.at(i), dest_pos));
 
             }
@@ -168,7 +168,7 @@ int RenderedAudio::GetMeasureLength(const int &channel) {
 }
 
 // Checks if the given channel has reached the start of a new measure (plus or minus the given buffer in ms)
-bool RenderedAudio::IsOnBeat(const int &channel, const int64_t &buffer) {
+bool RenderedAudio::IsNewMeasure(const int &channel, const int &buffer) {
 
 	// If neither BPM nor measure length has been set for this channel, return false
 	if (!(track_bpm.at(channel) > -1 && measure_lengths.at(channel) > 0)) return false;
