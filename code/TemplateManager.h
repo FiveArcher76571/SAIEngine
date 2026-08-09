@@ -12,8 +12,6 @@
 #include "LuaManager.h"
 
 #include "rapidjson/document.h"
-#include "lua.hpp"
-#include "LuaBridge.h"
 
 class TemplateManager {
 

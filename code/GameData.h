@@ -16,8 +16,6 @@
 #include "fluidsynth.h"
 #include "glm/glm.hpp"
 #include "SDL3/SDL.h"
-#include "lua.hpp"
-#include "LuaBridge.h"
 
 // State tracker enum class
 enum class GameState {

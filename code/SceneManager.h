@@ -19,8 +19,6 @@
 
 #include "rapidjson/document.h"
 #include "SDL3/SDL.h"
-#include "lua.hpp"
-#include "LuaBridge.h"
 
 class SceneManager {
 

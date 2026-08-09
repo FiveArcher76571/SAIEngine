@@ -16,8 +16,6 @@
 #include "rapidjson/document.h"
 #include "glm/glm.hpp"
 #include "SDL3/SDL.h"
-#include "lua.hpp"
-#include "LuaBridge.h"
 
 // Holds a component's type and LuaRef
 struct Component {

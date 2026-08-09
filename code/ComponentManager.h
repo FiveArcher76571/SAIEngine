@@ -10,9 +10,6 @@
 #include "EngineTools.h"
 #include "LuaManager.h"
 
-#include "lua.hpp"
-#include "LuaBridge.h"
-
 class ComponentManager {
 
 	// Container of LuaRef components
