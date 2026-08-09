@@ -67,7 +67,7 @@ void GameData::initialize() {
 	// Add Input namespace and functions
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Input")
-		.addFunction("EnableMIDIControl", &AudioManager::MIDI_EnableRoutingAsInput)
+		.addFunction("EnableMIDIControl", &SequencedAudio::EnableRoutingAsInput)
 		.addFunction("GetKey", &InputManager::GetKey)
 		.addFunction("GetKeyDown", &InputManager::GetKeyDown)
 		.addFunction("GetKeyUp", &InputManager::GetKeyUp)
@@ -87,48 +87,6 @@ void GameData::initialize() {
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Text")
 		.addFunction("Draw", &TextManager::CreateTextRenderRequest)
-		.endNamespace();
-
-	// Add Audio namespaces and functions...
-
-	// Rendered Audio
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("RAudio")
-		.addFunction("Play", &AudioManager::Play)
-		.addFunction("Pause", &AudioManager::Pause)
-		.addFunction("PauseAll", &AudioManager::PauseAll)
-		.addFunction("Resume", &AudioManager::Resume)
-		.addFunction("ResumeAll", &AudioManager::ResumeAll)
-		.addFunction("SetGain", &AudioManager::SetGain)
-		.addFunction("SetLoopPoints", &AudioManager::SetLoopPoints)
-		.addFunction("ResetLoopPoints", &AudioManager::ResetLoopPoints)
-		.addFunction("SetBPM", &AudioManager::SetBPM)
-		.addFunction("GetBPM", &AudioManager::GetBPM)
-		.addFunction("SetMeasureLength", &AudioManager::SetMeasureLength)
-		.addFunction("GetMeasureLength", &AudioManager::GetMeasureLength)
-		.addFunction("IsOnBeat", &AudioManager::IsOnBeat)
-		.endNamespace();
-
-	// Synthesized Audio
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("SAudio")
-		.addFunction("Enable", &AudioManager::MIDI_EnablePlayback)
-		.addFunction("EnableMIDIController", &AudioManager::MIDI_EnableControllerSupport)
-		.addFunction("LoadMIDI", &AudioManager::MIDI_LoadMIDI)
-		.addFunction("LoadSF2", &AudioManager::MIDI_LoadSF2)
-		.addFunction("Play", &AudioManager::MIDI_Play)
-		.addFunction("Pause", &AudioManager::MIDI_Pause)
-		.addFunction("Resume", &AudioManager::MIDI_Resume)
-		.addFunction("GetCurrentTick", &AudioManager::MIDI_GetCurrentTick)
-		.addFunction("GetBPM", &AudioManager::MIDI_GetBPM)
-		.addFunction("SetBPM", &AudioManager::MIDI_SetBPM)
-		.addFunction("SetReverb", &AudioManager::MIDI_SetReverb)
-		.addFunction("SetGain", &AudioManager::MIDI_SetGain)
-		.addFunction("SetChannelVolume", &AudioManager::MIDI_SetChannelVolume)
-		.addFunction("SetLoopPoints", &AudioManager::MIDI_SetLoopPoints)
-		.addFunction("ResetLoopPoints", &AudioManager::MIDI_ResetLoopPoints)
-		.addFunction("SendKeyOn", &AudioManager::MIDI_SendKeyOn)
-		.addFunction("SendKeyOff", &AudioManager::MIDI_SendKeyOff)
 		.endNamespace();
 
 	// Image draws
