@@ -45,6 +45,7 @@ void AudioManager::initialize() {
 		.addFunction("SetMeasureLength", &RenderedAudio::SetMeasureLength)
 		.addFunction("GetMeasureLength", &RenderedAudio::GetMeasureLength)
 		.addFunction("IsNewMeasure", &RenderedAudio::IsNewMeasure)
+		.addFunction("IsOnBeat", &RenderedAudio::IsOnBeat)
 		.endNamespace();
 
 	// Sequenced Audio
