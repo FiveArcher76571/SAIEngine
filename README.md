@@ -32,7 +32,8 @@ SAIEngine is prepared to, and (hopefully) will, work on Windows, Mac, and Linux 
   - Windows 11 x64
   - Visual Studio 2022
 - Mac
-  - MacOS 15 Sequoia on M1
+  - macOS 15 Sequoia on M1
+  - macOS 26 Tahoe on M1
   - AppleClang/Xcode
 - Linux
   - Debian 13 x64
