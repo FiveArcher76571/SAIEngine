@@ -34,7 +34,7 @@ void SceneManager::initialize(Renderer &renderer, GameSetup &game_config) {
 	switch_scene(game_config.get_initial_scene());
 
 	// Update camera position
-	renderer.set_camera_pos(new_camera_pos, false);
+	renderer.SetCameraPos(new_camera_pos.x, new_camera_pos.y, false);
 
 }
 

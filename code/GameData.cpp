@@ -45,8 +45,8 @@ void GameData::initialize() {
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Camera")
 		.addFunction("SetPosition", &Renderer::SetCameraPos)
-		.addFunction("GetPosition", &Renderer::get_camera_pos)
-		.addFunction("SetZoom", &Renderer::set_zoom)
+		.addFunction("GetPosition", &Renderer::GetCameraPos)
+		.addFunction("SetZoom", &Renderer::SetZoom)
 		.addFunction("GetZoom", &Renderer::GetZoomFactor)
 		.endNamespace();
 

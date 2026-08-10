@@ -67,6 +67,13 @@ void Renderer::initialize(GameSetup &game_config) {
 
 }
 
+// Get a pointer to the SDL renderer
+SDL_Renderer *Renderer::get_renderer() {
+
+	return renderer;
+
+}
+
 // Get the window width
 int Renderer::get_window_width() {
 
@@ -82,15 +89,18 @@ int Renderer::get_window_height() {
 }
 
 // Get the current camera position (automatically apply offset)
-glm::vec2 Renderer::get_camera_pos() {
+glm::vec2 Renderer::GetCameraPos() {
 
 	return camera.pos + camera.offset;
 
 }
 
-// Set the camera position to the given vec2 (ignoring offset)
+// Set the camera position to the given position (ignoring offset)
 // Does easing if flag is set
-void Renderer::set_camera_pos(const glm::vec2 &new_pos, const bool &easing) {
+void Renderer::SetCameraPos(const float &x, const float &y, const bool &easing) {
+
+	// Put the new position in a vec2
+	glm::vec2 new_pos = glm::vec2(x, y);
 
 	// If we don't want easing, immediately set the camera position and move on
 	if (!easing) {
@@ -102,6 +112,30 @@ void Renderer::set_camera_pos(const glm::vec2 &new_pos, const bool &easing) {
 
 	// Otherwise, mix the two positions using glm::mix and the defined easing factor
 	camera.pos = glm::mix(camera.pos, new_pos, camera.ease);
+
+}
+
+// Get the current zoom factor
+float Renderer::GetZoomFactor() {
+
+	return camera.zoom;
+
+}
+
+// Set a zoom factor for the upcoming rendering
+void Renderer::SetZoom(const float &zoom_factor) {
+
+	// Set the zoom factor for the renderer using SDL_RenderSetScale
+	// If unsuccessful throw an error
+	if (!SDL_SetRenderScale(renderer, zoom_factor, zoom_factor)) {
+
+		std::cout << "Error: SDL couldn't set the zoom factor!\nError:\n" << SDL_GetError();
+		exit(0);
+
+	}
+
+	// Also update camera struct
+	camera.zoom = zoom_factor;
 
 }
 
@@ -125,7 +159,7 @@ void Renderer::clear_render(SDL_Color &color) {
 void Renderer::copy_queued_images() {
 
 	// Set zoom
-	set_zoom(camera.zoom);
+	SetZoom(camera.zoom);
 
 	// Stable sort the queue
 	std::stable_sort(image_requests.begin(), image_requests.end(), ImageDrawRequestComp);
@@ -137,8 +171,8 @@ void Renderer::copy_queued_images() {
 		SDL_FRect final_render_pos = req.pos;
 
 		// Translate based on camera position
-		final_render_pos.x -= get_camera_pos().x;
-		final_render_pos.y -= get_camera_pos().y;
+		final_render_pos.x -= GetCameraPos().x;
+		final_render_pos.y -= GetCameraPos().y;
 
 		// Apply flipping...
 
@@ -178,7 +212,7 @@ void Renderer::copy_queued_images() {
 	}
 
 	// Reset zoom
-	set_zoom(1);
+	SetZoom(1);
 
 }
 
@@ -266,5 +300,145 @@ void Renderer::present_render() {
 
 	// Reset ImageManager's draw request ID counter
 	req_id_counter = 0;
+
+}
+
+// Draw UI elements
+void Renderer::DrawUI(const std::string &image_name, const int &pos_x, const int &pos_y) {
+
+	// Create a new image draw request
+	ImageDrawRequest new_req;
+
+	// Populate image pointer
+	new_req.image = ImageManager::get_image(image_name, renderer);
+
+	// Populate position
+	new_req.pos = { static_cast<float>(pos_x), static_cast<float>(pos_y), 0, 0 };
+
+	// Get width and height from texture
+	SDL_GetTextureSize(new_req.image->texture, &new_req.pos.w, &new_req.pos.h);
+
+	// Populate ID
+	new_req.id = req_id_counter++;
+
+	// Add the new request to the queue
+	Renderer::UI_requests.push_back(new_req);
+
+}
+
+// Draw UI elements ~extended~
+void Renderer::DrawUIEx(const std::string &image_name, const int &pos_x, const int &pos_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order) {
+
+	// Create a new image draw request
+	ImageDrawRequest new_req;
+
+	// Populate image pointer
+	new_req.image = ImageManager::get_image(image_name, renderer);
+
+	// Populate position
+	new_req.pos = { static_cast<float>(pos_x), static_cast<float>(pos_y), 0, 0 };
+
+	// Get width and height from texture
+	SDL_GetTextureSize(new_req.image->texture, &new_req.pos.w, &new_req.pos.h);
+
+	// Populate color
+	new_req.color = { Uint8(color_r), Uint8(color_g), Uint8(color_b), Uint8(color_a) };
+
+	// Populate sorting order
+	new_req.sorting_order = sorting_order;
+
+	// Populate ID
+	new_req.id = req_id_counter++;
+
+	// Add the new request to the queue
+	UI_requests.push_back(new_req);
+
+}
+
+// Draw images in world coordinates
+void Renderer::Draw(const std::string &image_name, const float &pos_x, const float &pos_y) {
+
+	// Create a new image draw request
+	ImageDrawRequest new_req;
+
+	// Populate image pointer
+	new_req.image = ImageManager::get_image(image_name, renderer);
+
+	// Populate position
+	new_req.pos = { static_cast<float>(pos_x), static_cast<float>(pos_y), 0, 0 };
+
+	// Get width and height from texture
+	SDL_GetTextureSize(new_req.image->texture, &new_req.pos.w, &new_req.pos.h);
+
+	// Set pivot point
+	SDL_GetTextureSize(new_req.image->texture, &new_req.pivot.x, &new_req.pivot.y);
+
+	// Divide by two to set to center (default)
+	new_req.pivot.x *= 0.5f;
+	new_req.pivot.y *= 0.5f;
+
+	// Populate ID
+	new_req.id = req_id_counter++;
+
+	// Add the new request to the queue
+	image_requests.push_back(new_req);
+
+}
+
+// Draw images ~extended~
+void Renderer::DrawEx(const std::string &image_name, const float &pos_x, const float &pos_y, const int &rotation, const float &scale_x, const float &scale_y, const float &pivot_x, const float &pivot_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order) {
+
+	// Create a new image draw request
+	ImageDrawRequest new_req;
+
+	// Populate image pointer
+	new_req.image = ImageManager::get_image(image_name, renderer);
+
+	// Populate position
+	new_req.pos = { static_cast<float>(pos_x), static_cast<float>(pos_y), 0, 0 };
+
+	// Get width and height from texture
+	SDL_GetTextureSize(new_req.image->texture, &new_req.pos.w, &new_req.pos.h);
+
+	// Populate rotation
+	new_req.rotation = rotation;
+
+	// Populate scale
+	new_req.scale = glm::vec2(scale_x, scale_y);
+
+	// Populate pivot
+	new_req.pivot = { pivot_x, pivot_y };
+
+	// Populate color
+	new_req.color = { Uint8(color_r), Uint8(color_g), Uint8(color_b), Uint8(color_a) };
+
+	// Populate sorting order
+	new_req.sorting_order = sorting_order;
+
+	// Populate ID
+	new_req.id = req_id_counter++;
+
+	// Add the new request to the queue
+	image_requests.push_back(new_req);
+
+}
+
+// Draw pixel (screen coordinates)
+void Renderer::DrawPixel(const int &pos_x, const int &pos_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a) {
+
+	// Create a new image draw request
+	ImageDrawRequest new_req;
+
+	// Populate position
+	new_req.pos = { static_cast<float>(pos_x), static_cast<float>(pos_y), 0, 0 };
+
+	// Populate color
+	new_req.color = { Uint8(color_r), Uint8(color_g), Uint8(color_b), Uint8(color_a) };
+
+	// Populate ID
+	new_req.id = req_id_counter++;
+
+	// Add the new request to the queue
+	pixel_requests.push_back(new_req);
 
 }
