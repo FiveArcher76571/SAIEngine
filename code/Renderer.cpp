@@ -102,6 +102,38 @@ int Renderer::GetWindowHeight() {
 
 }
 
+// Set the window size (width/height)
+void Renderer::SetWindowSize(const int &width, const int &height) {
+
+	SDL_SetWindowSize(window, width, height);
+
+}
+
+// Get the window's x position
+int Renderer::GetWindowPosX() {
+
+	int x = -1;
+	SDL_GetWindowPosition(window, &x, nullptr);
+	return x;
+
+}
+
+// Get the window's y position
+int Renderer::GetWindowPosY() {
+
+	int y = -1;
+	SDL_GetWindowPosition(window, nullptr, &y);
+	return y;
+
+}
+
+// Set the window's position (x/y on screen)
+void Renderer::SetWindowPos(const int &x, const int &y) {
+
+	SDL_SetWindowPosition(window, x, y);
+
+}
+
 // Get the current camera position (automatically apply offset)
 glm::vec2 Renderer::GetCameraPos() {
 

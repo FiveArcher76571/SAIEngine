@@ -39,6 +39,10 @@ void GameData::initialize() {
 		.beginNamespace("Window")
 		.addFunction("GetWidth", &Renderer::GetWindowWidth)
 		.addFunction("GetHeight", &Renderer::GetWindowHeight)
+		.addFunction("SetSize", &Renderer::SetWindowSize)
+		.addFunction("GetXPos", &Renderer::GetWindowPosX)
+		.addFunction("GetYPos", &Renderer::GetWindowPosY)
+		.addFunction("SetPos", &Renderer::SetWindowPos)
 		.endNamespace();
 
 	// Camera functions
