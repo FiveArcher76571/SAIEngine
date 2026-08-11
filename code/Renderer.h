@@ -16,17 +16,6 @@
 #include "rapidjson/document.h"
 #include "SDL3/SDL.h"
 
-// Window-related variables
-struct Window {
-
-	// SDL_Window object
-	static inline SDL_Window *SDL_Window;
-
-	// Window position/dimensions on screen
-	static inline SDL_Rect rect = { 100, 100, 640, 360 };
-
-};
-
 // Camera-related variables
 struct Camera {
 
@@ -46,8 +35,8 @@ struct Camera {
 
 class Renderer {
 
-	// Window details
-	static inline Window window;
+	// SDL_Window object
+	static inline SDL_Window *window;
 
 	// Camera details
 	static inline Camera camera;
@@ -102,16 +91,20 @@ public:
 	// Renderer initializer
 	// Gets game.config passed in and pulls other data from resources/rendering.config
 	// Also initializes the ImageManager and TextManager (using game.config)
-	void initialize(GameSetup &game_config);
+	static void initialize(GameSetup &game_config);
 
 	// Get a pointer to the SDL renderer
 	static SDL_Renderer *get_renderer();
 
+	/////
+	///// Window
+	/////
+
 	// Get the window width
-	static int get_window_width();
+	static int GetWindowWidth();
 
 	// Get the window height
-	static int get_window_height();
+	static int GetWindowHeight();
 
 	/////
 	///// Camera

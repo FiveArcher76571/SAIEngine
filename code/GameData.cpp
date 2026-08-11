@@ -37,8 +37,8 @@ void GameData::initialize() {
 	// Window details
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Window")
-		.addFunction("GetWidth", &Renderer::get_window_width)
-		.addFunction("GetHeight", &Renderer::get_window_height)
+		.addFunction("GetWidth", &Renderer::GetWindowWidth)
+		.addFunction("GetHeight", &Renderer::GetWindowHeight)
 		.endNamespace();
 
 	// Camera functions

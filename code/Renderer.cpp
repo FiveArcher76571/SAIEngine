@@ -13,13 +13,20 @@ void Renderer::initialize(GameSetup &game_config) {
 	// Get rendering config document
 	rapidjson::Document rendering_config;
 
+	// Placeholders for window details
+	int w_w = 640, w_h = 480, w_x = 0, w_y = 0;
+
 	// Read in rendering.config if it exists
 	// If not, keep default parameters
 	if (JSONReader::read_json("resources/rendering.config", rendering_config)) {
 
 		// Keep defaults if a resolution isn't defined...
-		if (rendering_config.HasMember("x_resolution")) window.rect.w = rendering_config["x_resolution"].GetInt();
-		if (rendering_config.HasMember("y_resolution")) window.rect.h =  rendering_config["y_resolution"].GetInt();
+		if (rendering_config.HasMember("x_resolution")) w_w = rendering_config["x_resolution"].GetInt();
+		if (rendering_config.HasMember("y_resolution")) w_h =  rendering_config["y_resolution"].GetInt();
+
+		// Also read in window position
+		if (rendering_config.HasMember("window_x")) w_x = rendering_config["window_x"].GetInt();
+		if (rendering_config.HasMember("window_y")) w_y = rendering_config["window_y"].GetInt();
 
 		// Also read in clear color
 		if (rendering_config.HasMember("clear_color_r")) clear_color.r = rendering_config["clear_color_r"].GetInt();
@@ -39,19 +46,22 @@ void Renderer::initialize(GameSetup &game_config) {
 	}
 
 	// Use the above info to create a shown SDL window
-	window.SDL_Window = SDL_CreateWindow(game_config.get_string("game_title").c_str(), window.rect.w, window.rect.h, 0);
+	window = SDL_CreateWindow(game_config.get_string("game_title").c_str(), w_w, w_h, 0);
 
 	// If window creation failed, throw an error
-	if (window.SDL_Window == nullptr) {
+	if (window == nullptr) {
 
 		std::cout << "Error: SDL couldn't create a window!\nError:\n" << SDL_GetError();
 		exit(0);
 
 	}
 
+	// Set the window's position
+	SDL_SetWindowPosition(window, w_x, w_y);
+
 	// Now create an SDL renderer
 	// Enable VSync
-	renderer = SDL_CreateRenderer(window.SDL_Window, "");
+	renderer = SDL_CreateRenderer(window, "");
 	SDL_SetRenderVSync(renderer, 1);
 
 	// If renderer creation failed, throw an error
@@ -75,16 +85,20 @@ SDL_Renderer *Renderer::get_renderer() {
 }
 
 // Get the window width
-int Renderer::get_window_width() {
+int Renderer::GetWindowWidth() {
 
-	return window.rect.w;
+	int width = -1;
+	SDL_GetWindowSize(window, &width, nullptr);
+	return width;
 
 }
 
 // Get the window height
-int Renderer::get_window_height() {
+int Renderer::GetWindowHeight() {
 
-	return window.rect.h;
+	int height = -1;
+	SDL_GetWindowSize(window, nullptr, &height);
+	return height;
 
 }
 
@@ -194,9 +208,13 @@ void Renderer::copy_queued_images() {
 		int pivot_y = static_cast<int>(req.pivot.y * abs_scale.y);
 		SDL_FPoint scaled_pivot = { static_cast<float>(pivot_x), static_cast<float>(pivot_y) };
 
+		// Get the window size
+		int w_w = 0, w_h = 0;
+		SDL_GetWindowSize(window, &w_w, &w_h);
+
 		// Translate final position based on all factors (given in spec)
-		final_render_pos.x = static_cast<int>(final_render_pos.x * PPM + window.rect.w * 0.5f * (1.0f / camera.zoom) - scaled_pivot.x);
-		final_render_pos.y = static_cast<int>(final_render_pos.y * PPM + window.rect.h * 0.5f * (1.0f / camera.zoom) - scaled_pivot.y);
+		final_render_pos.x = static_cast<int>(final_render_pos.x * PPM + w_w * 0.5f * (1.0f / camera.zoom) - scaled_pivot.x);
+		final_render_pos.y = static_cast<int>(final_render_pos.y * PPM + w_h * 0.5f * (1.0f / camera.zoom) - scaled_pivot.y);
 
 		// Apply tint/alpha
 		SDL_SetTextureColorMod(req.image->texture, req.color.r, req.color.g, req.color.b);
