@@ -205,6 +205,6 @@ bool RenderedAudio::IsOnBeat(const int &channel, const int &buffer) {
 	int distance = current_pos % beat_length;
 
 	// Return true if the distance is less than the given buffer amt (current pos within boundary)
-	return (distance >= buffer) ? true : false;
+	return distance <= buffer;
 
 }
