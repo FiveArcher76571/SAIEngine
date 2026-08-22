@@ -54,9 +54,9 @@ void GameData::initialize() {
 		.addFunction("GetZoom", &Renderer::GetZoomFactor)
 		.endNamespace();
 
-	// Add Debug logging functionality
+	// Add console logging functionality
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Debug")
+		.beginNamespace("Console")
 		.addFunction("Log", &EngineTools::Log)
 		.addFunction("LogError", &EngineTools::LogError)
 		.endNamespace();
