@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 #include <algorithm>
+#include "stdlib.h"
 #include "lua.hpp"
 #include "LuaBridge.h"
 
@@ -22,16 +23,18 @@ public:
 	///// Lua-exposed
 	/////
 
-	// Prints given message to cout (log)
-	static inline void Log(const std::string &message) {
+	// Prints given message to cout
+	static inline void Print(const std::string &message) {
 
+		std::system("Color 07");
 		std::cout << message << std::endl;
 
 	}
 
-	// Prints given message to cout (error log)
-	static inline void LogError(const std::string &message) {
+	// Prints given message to cout (error)
+	static inline void PrintError(const std::string &message) {
 
+		std::system("Color 04");
 		std::cout << message << std::endl;
 
 	}

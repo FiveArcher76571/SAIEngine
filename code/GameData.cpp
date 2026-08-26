@@ -57,8 +57,8 @@ void GameData::initialize() {
 	// Add console logging functionality
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Console")
-		.addFunction("Log", &EngineTools::Log)
-		.addFunction("LogError", &EngineTools::LogError)
+		.addFunction("Print", &EngineTools::Print)
+		.addFunction("PrintError", &EngineTools::PrintError)
 		.endNamespace();
 
 	// Add glm::vec2 class to Lua
