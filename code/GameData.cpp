@@ -25,6 +25,20 @@ void GameData::initialize() {
 	// Initialize Lua and LuaBridge...
 	LuaManager::initialize();
 
+	// Add glm::vec2 class to Lua
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginClass<glm::vec2>("vec2")
+		.addProperty("x", &glm::vec2::x)
+		.addProperty("y", &glm::vec2::y)
+		.endClass();
+
+	// Add glm::ivec2 class to Lua
+	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
+		.beginClass<glm::ivec2>("ivec2")
+		.addProperty("x", &glm::ivec2::x)
+		.addProperty("y", &glm::ivec2::y)
+		.endClass();
+
 	// Add Application namespace and functions
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Application")
@@ -40,8 +54,7 @@ void GameData::initialize() {
 		.addFunction("GetWidth", &Renderer::GetWindowWidth)
 		.addFunction("GetHeight", &Renderer::GetWindowHeight)
 		.addFunction("SetSize", &Renderer::SetWindowSize)
-		.addFunction("GetXPos", &Renderer::GetWindowPosX)
-		.addFunction("GetYPos", &Renderer::GetWindowPosY)
+		.addFunction("GetPos", &Renderer::GetWindowPos)
 		.addFunction("SetPos", &Renderer::SetWindowPos)
 		.endNamespace();
 
@@ -60,13 +73,6 @@ void GameData::initialize() {
 		.addFunction("Print", &EngineTools::Print)
 		.addFunction("PrintError", &EngineTools::PrintError)
 		.endNamespace();
-
-	// Add glm::vec2 class to Lua
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginClass<glm::vec2>("vec2")
-		.addProperty("x", &glm::vec2::x)
-		.addProperty("y", &glm::vec2::y)
-		.endClass();
 
 	// Add Input namespace and functions
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())

@@ -109,11 +109,8 @@ public:
 	// Set the window size (width/height)
 	static void SetWindowSize(const int &width, const int &height);
 
-	// Get the window's x position
-	static int GetWindowPosX();
-
-	// Get the window's y position
-	static int GetWindowPosY();
+	// Get the window's position
+	static glm::ivec2 GetWindowPos();
 
 	// Set the window's position (x/y on screen)
 	static void SetWindowPos(const int &x, const int &y);

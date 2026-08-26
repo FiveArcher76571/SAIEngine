@@ -109,21 +109,12 @@ void Renderer::SetWindowSize(const int &width, const int &height) {
 
 }
 
-// Get the window's x position
-int Renderer::GetWindowPosX() {
+// Get the window's position
+glm::ivec2 Renderer::GetWindowPos() {
 
-	int x = -1;
-	SDL_GetWindowPosition(window, &x, nullptr);
-	return x;
-
-}
-
-// Get the window's y position
-int Renderer::GetWindowPosY() {
-
-	int y = -1;
-	SDL_GetWindowPosition(window, nullptr, &y);
-	return y;
+	glm::ivec2 pos;
+	SDL_GetWindowPosition(window, &pos.x, &pos.y);
+	return pos;
 
 }
 
