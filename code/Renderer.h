@@ -164,13 +164,13 @@ public:
 	// Draw UI elements
 	static void DrawUI(const std::string &image_name, const int &pos_x, const int &pos_y);
 
-	// Draw UI elements ~extended~
+	// Draw UI elements *extended*
 	static void DrawUIEx(const std::string &image_name, const int &pos_x, const int &pos_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order);
 
 	// Draw images in world coordinates
 	static void Draw(const std::string &image_name, const float &pos_x, const float &pos_y);
 
-	// Draw images ~extended~
+	// Draw images *extended*
 	static void DrawEx(const std::string &image_name, const float &pos_x, const float &pos_y, const int &rotation, const float &scale_x, const float &scale_y, const float &pivot_x, const float &pivot_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order);
 
 	// Draw pixel (screen coordinates)

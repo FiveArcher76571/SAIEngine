@@ -367,7 +367,7 @@ void Renderer::DrawUI(const std::string &image_name, const int &pos_x, const int
 
 }
 
-// Draw UI elements ~extended~
+// Draw UI elements *extended*
 void Renderer::DrawUIEx(const std::string &image_name, const int &pos_x, const int &pos_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order) {
 
 	// Create a new image draw request
@@ -426,7 +426,7 @@ void Renderer::Draw(const std::string &image_name, const float &pos_x, const flo
 
 }
 
-// Draw images ~extended~
+// Draw images *extended*
 void Renderer::DrawEx(const std::string &image_name, const float &pos_x, const float &pos_y, const int &rotation, const float &scale_x, const float &scale_y, const float &pivot_x, const float &pivot_y, const int &color_r, const int &color_g, const int &color_b, const int &color_a, const int &sorting_order) {
 
 	// Create a new image draw request
