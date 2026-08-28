@@ -151,42 +151,42 @@ void InputManager::update_states_eof() {
 ///// Info fetchers
 /////
 
-// Checks if the given key is down
-bool InputManager::key_down(const SDL_Scancode &scancode) {
+// Checks if the given key (as keycode) is down
+bool InputManager::GetKey(const std::string &keycode) {
 
-	return key_states.find(scancode) == key_states.end() ? false : key_states[scancode] == InputState::KEY_DOWN;
+	if (__keycode_to_scancode.find(keycode) != __keycode_to_scancode.end()) {
+
+		return key_states.find(__keycode_to_scancode.at(keycode)) == key_states.end() ? false : key_states[__keycode_to_scancode.at(keycode)] == InputState::KEY_DOWN;
+
+	}
+
+	return false;
 
 }
 
 // Checks if the given key was pressed this frame
-bool InputManager::key_pressed(const SDL_Scancode &scancode) {
+bool InputManager::GetKeyDown(const std::string &keycode) {
 
-	return key_states.find(scancode) == key_states.end() ? false : key_states[scancode] == InputState::KEY_JUST_DOWN;
+	if (__keycode_to_scancode.find(keycode) != __keycode_to_scancode.end()) {
+
+		return key_states.find(__keycode_to_scancode.at(keycode)) == key_states.end() ? false : key_states[__keycode_to_scancode.at(keycode)] == InputState::KEY_JUST_DOWN;
+
+	}
+
+	return false;
 
 }
 
 // Checks if the given key was released this frame
-bool InputManager::key_released(const SDL_Scancode &scancode) {
-
-	return key_states.find(scancode) == key_states.end() ? false : key_states[scancode] == InputState::KEY_JUST_UP;
-
-}
-
-// Same as above three, but takes in keycodes, as given in keycode_to_scancode.h
-
-bool InputManager::GetKey(const std::string &keycode) {
-
-	return __keycode_to_scancode.find(keycode) == __keycode_to_scancode.end() ? false : key_down(__keycode_to_scancode.at(keycode)) || key_pressed(__keycode_to_scancode.at(keycode));
-
-}
-bool InputManager::GetKeyDown(const std::string &keycode) {
-
-	return __keycode_to_scancode.find(keycode) == __keycode_to_scancode.end() ? false : key_pressed(__keycode_to_scancode.at(keycode));
-
-}
 bool InputManager::GetKeyUp(const std::string &keycode) {
 
-	return __keycode_to_scancode.find(keycode) == __keycode_to_scancode.end() ? false : key_released(__keycode_to_scancode.at(keycode));
+	if (__keycode_to_scancode.find(keycode) != __keycode_to_scancode.end()) {
+
+		return key_states.find(__keycode_to_scancode.at(keycode)) == key_states.end() ? false : key_states[__keycode_to_scancode.at(keycode)] == InputState::KEY_JUST_UP;
+
+	}
+
+	return false;
 
 }
 

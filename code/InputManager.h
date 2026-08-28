@@ -119,19 +119,14 @@ public:
 	/////
 	///// Info fetchers
 	/////
-	
+
 	// Checks if the given key is down
-	static bool key_down(const SDL_Scancode &scancode);
+	static bool GetKey(const std::string &keycode);
 
 	// Checks if the given key was pressed this frame
-	static bool key_pressed(const SDL_Scancode &scancode);
+	static bool GetKeyDown(const std::string &keycode);
 
 	// Checks if the given key was released this frame
-	static bool key_released(const SDL_Scancode &scancode);
-
-	// Same as above three, but takes in keycodes, as given in keycode_to_scancode.h
-	static bool GetKey(const std::string &keycode);
-	static bool GetKeyDown(const std::string &keycode);
 	static bool GetKeyUp(const std::string &keycode);
 
 	// MIDI key checkers
