@@ -254,7 +254,6 @@ void SequencedAudio::SetGain(const float &new_gain) {
     // Thus, I am restricting values to between 0 and 1 inclusive...
     if (new_gain > 1.0f) {
         std::cout << "WARNING: Setting gain to a value above 1.0 is dangerous to hearing! (I would know I tried it with headphones...)\nI recommend any further gain manipulation to be done within the MIDI file itself, rather than globally.\n";
-        return;
     }
 
     fluid_synth_set_gain(synth, new_gain);
