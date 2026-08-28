@@ -18,6 +18,8 @@ To use my engine, simply [download the latest compiled binary here](https://gith
 - ...
 - Profit (if you wanna)!
 
+To learn more, [visit the documentation here](https://fivearcher76571.github.io/SAIEngine-docs/site)!
+
 ### *Running on Mac
 Currently, though SAIEngine will compile to a .app bundle (which can usually be double-clicked to launch from the GUI), the app can only be launched manually via the Terminal. To launch, simply run the following command from a Terminal window in the same directory as the built app:
 
