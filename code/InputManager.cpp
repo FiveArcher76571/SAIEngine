@@ -209,6 +209,13 @@ bool InputManager::GetMIDIUp(const int &key) {
 
 }
 
+// Checks the given MIDI key's velocity
+int InputManager::GetMIDIKeyVelocity(const int &key) {
+
+	return midi_velocities.find(key) == midi_velocities.end() ? -1 : midi_velocities[key];
+
+}
+
 // Checks if the given mouse button is down
 bool InputManager::mouse_down(const int &mouse_button) {
 

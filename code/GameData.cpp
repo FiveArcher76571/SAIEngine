@@ -84,11 +84,12 @@ void GameData::initialize() {
 		.addFunction("GetMIDI", &InputManager::GetMIDI)
 		.addFunction("GetMIDIDown", &InputManager::GetMIDIDown)
 		.addFunction("GetMIDIUp", &InputManager::GetMIDIUp)
+		.addFunction("GetMIDIVelocity", &InputManager::GetMIDIKeyVelocity)
 		.addFunction("GetMousePosition", &InputManager::get_mouse_pos)
 		.addFunction("GetMouseButton", &InputManager::mouse_down)
 		.addFunction("GetMouseButtonDown", &InputManager::mouse_pressed)
 		.addFunction("GetMouseButtonUp", &InputManager::mouse_released)
-		.addFunction("GetMouseScrollDelta", &InputManager::get_mouse_scroll_delta)
+		.addFunction("GetMouseScroll", &InputManager::get_mouse_scroll_delta)
 		.addFunction("HideCursor", &InputManager::hide_cursor)
 		.addFunction("ShowCursor", &InputManager::show_cursor)
 		.endNamespace();

@@ -134,6 +134,9 @@ public:
 	static bool GetMIDIDown(const int &key);
 	static bool GetMIDIUp(const int &key);
 
+	// Checks the given MIDI key's velocity
+	static int GetMIDIKeyVelocity(const int &key);
+
 	// Checks if the given mouse button is down
 	static bool mouse_down(const int &mouse_button);
 
