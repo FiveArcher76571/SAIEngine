@@ -100,11 +100,8 @@ public:
 	///// Window
 	/////
 
-	// Get the window width
-	static int GetWindowWidth();
-
-	// Get the window height
-	static int GetWindowHeight();
+	// Get the window size
+	static glm::ivec2 GetWindowSize();
 
 	// Set the window size (width/height)
 	static void SetWindowSize(const int &width, const int &height);

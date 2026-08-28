@@ -84,21 +84,12 @@ SDL_Renderer *Renderer::get_renderer() {
 
 }
 
-// Get the window width
-int Renderer::GetWindowWidth() {
+// Get the window size
+glm::ivec2 Renderer::GetWindowSize() {
 
-	int width = -1;
-	SDL_GetWindowSize(window, &width, nullptr);
-	return width;
-
-}
-
-// Get the window height
-int Renderer::GetWindowHeight() {
-
-	int height = -1;
-	SDL_GetWindowSize(window, nullptr, &height);
-	return height;
+	glm::ivec2 dims;
+	SDL_GetWindowSize(window, &dims.x, &dims.y);
+	return dims;
 
 }
 

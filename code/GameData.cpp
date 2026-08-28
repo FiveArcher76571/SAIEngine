@@ -51,8 +51,7 @@ void GameData::initialize() {
 	// Window details
 	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
 		.beginNamespace("Window")
-		.addFunction("GetWidth", &Renderer::GetWindowWidth)
-		.addFunction("GetHeight", &Renderer::GetWindowHeight)
+		.addFunction("GetSize", &Renderer::GetWindowSize)
 		.addFunction("SetSize", &Renderer::SetWindowSize)
 		.addFunction("GetPos", &Renderer::GetWindowPos)
 		.addFunction("SetPos", &Renderer::SetWindowPos)
