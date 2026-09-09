@@ -37,7 +37,7 @@ public:
 		// This will never run because the open function will throw an error first
 		// But it's to make the green squigglies happy
 		if (file_pointer == nullptr) {
-			std::cout << "Error: file does not exist";
+			std::cout << "Error: Couldn't find the JSON file at the given location: " << path;
 			exit(0);
 		}
 
@@ -56,7 +56,7 @@ public:
 		// Throw an error if there are any errors in the JSON file
 		if (document.HasParseError()) {
 			rapidjson::ParseErrorCode errorCode = document.GetParseError();
-            std::cout << "error parsing json at [" << path << "]" << std::endl << errorCode << std::endl;
+            std::cout << "Error: Problem with following JSON file: " << path << std::endl << errorCode << std::endl;
 			exit(0);
 		}
 

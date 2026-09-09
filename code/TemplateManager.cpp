@@ -24,7 +24,7 @@ void TemplateManager::initialize() {
 
 		// If the read operation fails (for whatever reason) exit
 		if (!JSONReader::read_json(template_file.path().string().c_str(), current_template_doc)) {
-			std::cout << "Error reading this template file???";
+			std::cout << "Error: Something went wrong reading the following template file: " << template_file.path().string();
 			exit(0);
 		}
 

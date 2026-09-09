@@ -83,6 +83,53 @@ void InputManager::update_states_bof(const SDL_Event &input) {
 
 }
 
+// Callback function to update MIDI controller states
+int InputManager::update_states_midi(void *data, fluid_midi_event_t *event) {
+
+	// Get the event's type
+	int type = fluid_midi_event_get_type(event);
+
+	// If the note has been pressed, track that
+	// Note on = [144,159]
+	if (type >= 144 && type <= 159) {
+
+		// Get the key number pressed
+		int key = fluid_midi_event_get_key(event);
+
+		// Get the key's velocity
+		int velocity = fluid_midi_event_get_velocity(event);
+
+		// Update velocity in map
+		midi_velocities[key] = fluid_midi_event_get_velocity(event);
+
+		// If the velocity is 0, the note has been released, so assign the key state accordingly
+		if (velocity == 0) {
+
+			// Update state in map
+			midi_states[key] = InputState::KEY_JUST_UP;
+
+			// Update processing queue
+			midi_up_this_frame.push_back(key);
+
+		}
+
+		else {
+
+			// Update state in map
+			midi_states[key] = InputState::KEY_JUST_DOWN;
+
+			// Update processing queue
+			midi_down_this_frame.push_back(key);
+
+		}
+
+	}
+
+	// Return the value of the original callback function
+	return fluid_midi_router_handle_midi_event(data, event);
+
+}
+
 // Update key states at the end of frame
 void InputManager::update_states_eof() {
 

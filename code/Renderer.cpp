@@ -51,7 +51,7 @@ void Renderer::initialize(GameSetup &game_config) {
 	// If window creation failed, throw an error
 	if (window == nullptr) {
 
-		std::cout << "Error: SDL couldn't create a window!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't create a window!\n" << SDL_GetError();
 		exit(0);
 
 	}
@@ -67,7 +67,7 @@ void Renderer::initialize(GameSetup &game_config) {
 	// If renderer creation failed, throw an error
 	if (renderer == nullptr) {
 
-		std::cout << "Error: SDL couldn't create a renderer!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't create a renderer!\n" << SDL_GetError();
 		exit(0);
 
 	}
@@ -157,7 +157,7 @@ void Renderer::SetZoom(const float &zoom_factor) {
 	// If unsuccessful throw an error
 	if (!SDL_SetRenderScale(renderer, zoom_factor, zoom_factor)) {
 
-		std::cout << "Error: SDL couldn't set the zoom factor!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't set the zoom factor!\n" << SDL_GetError();
 		exit(0);
 
 	}

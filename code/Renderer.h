@@ -134,25 +134,25 @@ public:
 	/////
 
 	// Clear the renderer with the default clear color
-	void clear_render();
+	static void clear_render();
 
 	// Clear the renderer with the given color object
-	void clear_render(SDL_Color &color);
+	static void clear_render(SDL_Color &color);
 
 	// Copy image requests (world coordinates)
-	void copy_queued_images();
+	static void copy_queued_images();
 
 	// Copy UI requests (screen coordinates)
-	void copy_queued_UI();
+	static void copy_queued_UI();
 
 	// Copy pixel draw requests (screen coordinates)
-	void copy_queued_pixels();
+	static void copy_queued_pixels();
 
 	// Copy queued text draw requests
-	void copy_queued_text();
+	static void copy_queued_text();
 
 	// Present the render to the screen
-	void present_render();
+	static void present_render();
 
 	/////
 	///// Image Draw Requests

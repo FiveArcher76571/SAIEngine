@@ -22,12 +22,12 @@ public:
 
 	// TemplateManager initializer
 	// Reads in all templates from resources/actor_templates
-	void initialize();
+	static void initialize();
 
 	// Check if a template exists given its name
 	// If it does, assign the given actor to its values and return true
 	// If not, return false
-	bool check_and_assign_template(const std::string &template_name, Actor &actor);
+	static bool check_and_assign_template(const std::string &template_name, Actor &actor);
 
 };
 

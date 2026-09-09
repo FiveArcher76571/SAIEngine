@@ -33,7 +33,7 @@ public:
 		if (!std::filesystem::exists("resources/component_types/") || !std::filesystem::exists(comp_file.c_str())) {
 
 			// Throw an error if neither exist
-			std::cout << "error: failed to locate component " << component;
+			std::cout << "Error: Couldn't find the following component: " << component;
 			exit(0);
 
 		}
@@ -43,7 +43,7 @@ public:
 		// Check for errors in the Lua file while doing so
 		if (luaL_dofile(LuaManager::get_lua_state(), comp_file.c_str()) != LUA_OK) {
 
-			std::cout << "problem with lua file " << component;
+			std::cout << "Error: Problem with the following Lua file: " << component;
 			exit(0);
 
 		}

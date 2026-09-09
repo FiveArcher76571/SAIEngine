@@ -9,7 +9,7 @@ void TextManager::initialize() {
 	// Initialize SDL_ttf, throw an error if failed
 	if (!TTF_Init()) {
 
-		std::cout << "Error: SDL_ttf couldn't initialize!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't initialize SDL_ttf!\n" << SDL_GetError();
 		exit(0);
 
 	}
@@ -28,7 +28,7 @@ TTF_Font *TextManager::get_font(const std::string &font_name, const int &font_si
 	if (!std::filesystem::exists("resources/fonts/" + font_name + ".ttf")) {
 
 		// If not, throw an error
-		std::cout << "error: font " << font_name << " missing";
+		std::cout << "Error: The following font is missing: " << font_name;
 		exit(0);
 
 	}

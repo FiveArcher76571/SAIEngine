@@ -60,7 +60,7 @@ void RenderedAudio::Play(const int &channel, const std::string &trackname, const
 	// If the channel given isn't defined (over 50, under 0), throw an error
 	if (channel >= 50 || channel < 0) {
 
-		std::cout << "Error: there are only 50 channels, defined from [0,50)";
+		std::cout << "Error: There are only 50 channels: [0,50)";
 		exit(0);
 
 	}
@@ -71,7 +71,7 @@ void RenderedAudio::Play(const int &channel, const std::string &trackname, const
 		tracks.at(channel) = MIX_CreateTrack(mixer);
 		if (tracks.at(channel) == nullptr) {
 
-			std::cout << "error: unable to create MIX_Track at channel " << channel;
+			std::cout << "Error: Unable to create MIX_Track at channel " << channel;
 			exit(0);
 
 		}

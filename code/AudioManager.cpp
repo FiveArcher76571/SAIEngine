@@ -9,7 +9,7 @@ void AudioManager::initialize() {
 	// Initialize SDL_mixer
 	if (!MIX_Init()) {
 
-		std::cout << "Error when calling MIX_Init()\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't initialize SDL_mixer!\n" << SDL_GetError();
 		exit(0);
 
 	}
@@ -19,7 +19,7 @@ void AudioManager::initialize() {
 	if (mixer == nullptr) {
 
 		// If we couldn't open the audio device, throw an error
-		std::cout << "Error: unable to open audio device\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't open an audio device!\n" << SDL_GetError();
 		exit(0);
 
 	}

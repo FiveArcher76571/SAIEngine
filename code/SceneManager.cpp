@@ -187,7 +187,7 @@ Actor *SceneManager::InstantiateActor(const std::string &template_name) {
 	// Assign the template to it...
 	// If the template doesn't exist, throw an error and exit
 	if (!template_manager.check_and_assign_template(template_name, new_actor)) {
-		std::cout << "error: template " << template_name << " is missing";
+		std::cout << "Error: The following template is missing: " << template_name;
 		exit(0);
 	}
 
@@ -276,7 +276,7 @@ void SceneManager::switch_scene(const std::string &scene_name) {
 	// Read in scene from filesystem, and throw error if it doesn't exist...
 	if (!JSONReader::read_json(("resources/scenes/" + scene_name + ".scene").c_str(), scene_data)) {
 
-		std::cout << "error: scene " << scene_name << " is missing";
+		std::cout << "Error: The following scene is missing: " << scene_name;
 		exit(0);
 
 	}
@@ -294,7 +294,7 @@ void SceneManager::switch_scene(const std::string &scene_name) {
 
 			// Check if this template exists, and if not throw an error and exit
 			if (!template_manager.check_and_assign_template(actor_array[i]["template"].GetString(), new_actor)) {
-				std::cout << "error: template " << actor_array[i]["template"].GetString() << " is missing";
+				std::cout << "Error: The following template is missing: " << actor_array[i]["template"].GetString();
 				exit(0);
 			}
 

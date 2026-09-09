@@ -24,7 +24,7 @@ Image *ImageManager::get_image(const std::string &filename, SDL_Renderer *render
 	if (!std::filesystem::exists("resources/images/" + filename + ".png")) {
 
 		// If it doesn't, throw an error and exit
-		std::cout << "error: missing image " << filename;
+		std::cout << "Error: Couldn't find the following image: " << filename;
 		exit(0);
 
 	}

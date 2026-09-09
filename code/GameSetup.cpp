@@ -10,7 +10,7 @@ GameSetup::GameSetup() {
 	// If the resources folder doesn't exist in the root directory, throw an error
 	if (!std::filesystem::exists("resources/")) {
 
-		std::cout << "error: resources/ missing";
+		std::cout << "Error: Resources folder (resources/) missing!";
 		exit(0);
 
 	}
@@ -21,7 +21,7 @@ GameSetup::GameSetup() {
 	// If game.config doesn't exist in the resources folder, throw an error
 	if (!std::filesystem::exists(game_config_path)) {
 
-		std::cout << "error: resources/game.config missing";
+		std::cout << "Error: Game config (resources/game.config) missing!";
 		exit(0);
 
 	}
@@ -79,7 +79,7 @@ std::string GameSetup::get_initial_scene() {
 	// Throw error if initial scene has not been defined...
 	if (!game_config.HasMember("initial_scene")) {
 
-		std::cout << "error: initial_scene unspecified";
+		std::cout << "Error: You must specify an initial scene in game.config!";
 		exit(0);
 
 	}
