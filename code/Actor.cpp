@@ -213,6 +213,68 @@ void Actor::call_lifecycle_function(const std::string &function_name) {
 
 }
 
+// Process components that need to be added
+void Actor::process_add_components() {
+
+	// Add pending
+	for (auto &comp : components_to_add) {
+
+		// Add to main components list and alphabetical sorted list
+		components.insert({ comp.first, comp.second });
+		insert_alphabetical(comp.first);
+
+	}
+
+	// Start pending
+	for (auto &comp : components_to_add) {
+
+		// Call its OnStart lifecycle function
+		(*comp.second.ref)["OnStart"](*comp.second.ref);
+
+	}
+
+	// Clear the list
+	components_to_add.clear();
+
+}
+
+// Process components that need to be removed
+void Actor::process_remove_components() {
+
+	// Remove pending
+	for (const std::string &comp : components_to_remove) {
+
+		// Remove from the main components list
+		components.erase(comp);
+
+		// Find and remove from alphabetical sorted list
+		for (int i = 0; i < alphabetical_components.size(); i++) {
+
+			if (comp == alphabetical_components[i]) {
+				alphabetical_components.erase(alphabetical_components.begin() + i);
+				break;
+			}
+
+		}
+
+	}
+
+	// Clear the remove list
+	components_to_remove.clear();
+
+}
+
+// Toggle enable on all components
+void Actor::set_enable_all(const bool &enable) {
+
+	for (const std::string &comp_name : alphabetical_components) {
+
+		(*components[comp_name].ref)["enabled"] = enable;
+
+	}
+
+}
+
 // Flush all components (before scene switch/actor deletion)
 void Actor::flush_components() {
 
@@ -223,6 +285,125 @@ void Actor::flush_components() {
 		(*comp.second.ref)["enabled"] = false;
 
 		components_to_remove.insert(comp.first);
+
+	}
+
+}
+
+/////
+///// Lua-exposed functions
+/////
+
+// Get this actor's name
+std::string Actor::GetName() {
+
+	return name;
+
+}
+
+// Get this actor's ID
+int Actor::GetID() {
+
+	return id;
+
+}
+
+// Get component by key name
+luabridge::LuaRef Actor::GetComponentByKey(const std::string &key) {
+
+	return components.find(key) != components.end() && components_to_remove.find(key) == components_to_remove.end() ? *components[key].ref : luabridge::LuaRef(LuaManager::get_lua_state());
+
+}
+
+// Get first component of a given type
+luabridge::LuaRef Actor::GetComponent(const std::string &type) {
+
+	// Go through the alphabetically sorted key list...
+	for (std::string &comp_key : alphabetical_components) {
+
+		// Skip if it's been removed
+		if (components_to_remove.find(comp_key) != components_to_remove.end()) continue;
+
+		// Return the first occurrence of the matching component type
+		if (components[comp_key].type == type) return *components[comp_key].ref;
+
+	}
+
+	// If we haven't found anything, return nil
+	return luabridge::LuaRef(LuaManager::get_lua_state());
+
+}
+
+// Get list of components of a given type
+luabridge::LuaRef Actor::GetComponents(const std::string &type) {
+
+	// Make an empty table
+	luabridge::LuaRef new_table = luabridge::newTable(LuaManager::get_lua_state());
+
+	// Go through the alphabetically sorted key list...
+	for (std::string &comp_key : alphabetical_components) {
+
+		// Skip if it's been removed
+		if (components_to_remove.find(comp_key) != components_to_remove.end()) continue;
+
+		// Add every occurrence to the table
+		if (components[comp_key].type == type) new_table[comp_key] = components[comp_key].ref;
+
+	}
+
+	return new_table;
+
+}
+
+// Add a component of given type to this actor
+luabridge::LuaRef Actor::AddComponent(const std::string &type) {
+
+	// Pull base from the ComponentManager (required)
+	std::shared_ptr<luabridge::LuaRef> comp_base = ComponentManager::get_component(type);
+
+	// Make an instance of the component
+	std::shared_ptr<luabridge::LuaRef> comp_instance = std::make_shared<luabridge::LuaRef>(luabridge::newTable(LuaManager::get_lua_state()));
+
+	// Establish the new instance's inheritance
+	ComponentManager::establish_inheritance(*comp_instance, *comp_base);
+
+	// Get the actual ref from the shared pointer
+	luabridge::LuaRef &comp_ref = *comp_instance;
+
+	// The key is "r<n>" where n is the number of AddComponent calls thus far (stored in ComponentManager)
+	std::string new_key = "r" + std::to_string(ComponentManager::get_add_component_calls());
+	comp_ref["key"] = new_key;
+
+	// Add enabled flag to the instance
+	comp_ref["enabled"] = true;
+
+	// Store the finished component to our pending-add list
+	components_to_add.insert({ new_key,{ type, comp_instance } });
+
+	// Return the finished reference
+	return comp_ref;
+
+}
+
+// Remove a given component from this actor
+void Actor::RemoveComponent(const luabridge::LuaRef &to_remove) {
+
+	// Find the component in the list...
+	for (auto &comp : components) {
+
+		// Once found...
+		if (*comp.second.ref == to_remove) {
+
+			// Disable the component
+			(*comp.second.ref)["enabled"] = false;
+
+			// Add it to the list of components to remove
+			components_to_remove.insert(comp.first);
+
+			// Done!
+			return;
+
+		}
 
 	}
 
