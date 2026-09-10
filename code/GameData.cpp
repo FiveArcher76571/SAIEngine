@@ -6,129 +6,53 @@
 // Initialize the engine
 void GameData::initialize() {
 
-	// Initialize SDL, throw an error if failed
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-
-		std::cout << "Error: SDL couldn't initialize video!\n" << SDL_GetError();
-		exit(0);
-
+	// Get the list of modules to enable from config data
+	rapidjson::Value module_list;
+	
+	// If it doesn't exist or it's empty, enable everything...
+	if (!config_data.load_array("modules", module_list) || module_list.GetArray().Empty()) {
+		mod_enable_all();
+		return;
 	}
 
-	// Initialize SDL Audio too
-	if (!SDL_Init(SDL_INIT_AUDIO)) {
+	// Enable the default modules
+	mod_enable_defaults();
 
-		std::cout << "Error: SDL couldn't initialize audio!\n" << SDL_GetError();
-		exit(0);
+	// Make unordered set from the list of modules
+	std::unordered_set<std::string> modules_to_enable;
+	for (rapidjson::Value::ConstValueIterator mod = module_list.Begin(); mod != module_list.End(); mod++) modules_to_enable.insert(mod->GetString());
 
+	// Go through and enable given modules...
+
+	// Window init flag
+	bool window_init_done = false;
+
+	// Image (needs window)
+	if (modules_to_enable.find("Image") != modules_to_enable.end()) {
+		if (!window_init_done) mod_enable_window();
+		mod_enable_image();
 	}
 
-	// Initialize Lua and LuaBridge...
-	LuaManager::initialize();
+	// Text (needs window)
+	if (modules_to_enable.find("Text") != modules_to_enable.end()) {
+		if (!window_init_done) mod_enable_window();
+		mod_enable_text();
+	}
 
-	// Add glm::vec2 class to Lua
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginClass<glm::vec2>("vec2")
-		.addProperty("x", &glm::vec2::x)
-		.addProperty("y", &glm::vec2::y)
-		.endClass();
+	// Camera (needs window)
+	if (modules_to_enable.find("Camera") != modules_to_enable.end()) {
+		if (!window_init_done) mod_enable_window();
+		mod_enable_text();
+	}
 
-	// Add glm::ivec2 class to Lua
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginClass<glm::ivec2>("ivec2")
-		.addProperty("x", &glm::ivec2::x)
-		.addProperty("y", &glm::ivec2::y)
-		.endClass();
+	// Input
+	if (modules_to_enable.find("Input") != modules_to_enable.end()) mod_enable_image();
 
-	// Add Application namespace and functions
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Application")
-		.addFunction("Quit", &EngineTools::Quit)
-		.addFunction("Sleep", &EngineTools::Sleep)
-		.addFunction("OpenURL", &EngineTools::OpenURL)
-		.addFunction("GetFrame", &EngineTools::GetFrameNumber)
-		.endNamespace();
-
-	// Window details
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Window")
-		.addFunction("GetSize", &Renderer::GetWindowSize)
-		.addFunction("SetSize", &Renderer::SetWindowSize)
-		.addFunction("GetPos", &Renderer::GetWindowPos)
-		.addFunction("SetPos", &Renderer::SetWindowPos)
-		.endNamespace();
-
-	// Camera functions
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Camera")
-		.addFunction("SetPosition", &Renderer::SetCameraPos)
-		.addFunction("GetPosition", &Renderer::GetCameraPos)
-		.addFunction("SetZoom", &Renderer::SetZoom)
-		.addFunction("GetZoom", &Renderer::GetZoomFactor)
-		.endNamespace();
-
-	// Add console logging functionality
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Console")
-		.addFunction("Print", &EngineTools::Print)
-		.addFunction("PrintError", &EngineTools::PrintError)
-		.endNamespace();
-
-	// Add Input namespace and functions
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Input")
-		.addFunction("EnableMIDIControl", &SequencedAudio::EnableRoutingAsInput)
-		.addFunction("GetKey", &InputManager::GetKey)
-		.addFunction("GetKeyDown", &InputManager::GetKeyDown)
-		.addFunction("GetKeyUp", &InputManager::GetKeyUp)
-		.addFunction("GetMIDI", &InputManager::GetMIDI)
-		.addFunction("GetMIDIDown", &InputManager::GetMIDIDown)
-		.addFunction("GetMIDIUp", &InputManager::GetMIDIUp)
-		.addFunction("GetMIDIVelocity", &InputManager::GetMIDIKeyVelocity)
-		.addFunction("GetMousePosition", &InputManager::get_mouse_pos)
-		.addFunction("GetMouseButton", &InputManager::mouse_down)
-		.addFunction("GetMouseButtonDown", &InputManager::mouse_pressed)
-		.addFunction("GetMouseButtonUp", &InputManager::mouse_released)
-		.addFunction("GetMouseScroll", &InputManager::get_mouse_scroll_delta)
-		.addFunction("HideCursor", &InputManager::hide_cursor)
-		.addFunction("ShowCursor", &InputManager::show_cursor)
-		.endNamespace();
-
-	// Add Text namespace and functions
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Text")
-		.addFunction("Draw", &TextManager::CreateTextRenderRequest)
-		.endNamespace();
-
-	// Image draws
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Image")
-		.addFunction("DrawUI", &Renderer::DrawUI)
-		.addFunction("DrawUIEx", &Renderer::DrawUIEx)
-		.addFunction("Draw", &Renderer::Draw)
-		.addFunction("DrawEx", &Renderer::DrawEx)
-		.addFunction("DrawPixel", &Renderer::DrawPixel)
-		.endNamespace();
-
-	// Scene switching
-	luabridge::getGlobalNamespace(LuaManager::get_lua_state())
-		.beginNamespace("Scene")
-		.addFunction("Switch", &SceneManager::TriggerSceneSwitch)
-		.addFunction("GetName", &SceneManager::GetCurrentScene)
-		.endNamespace();
-
-	// Initialize the audio manager
-	audio_manager.initialize();
-
-	// Initialize the renderer with game.config
-	renderer.initialize(config_data);
-
-	// Initialize input manager
-	input_manager.initialize();
-
-	// Initialize the scene manager
-	scene_manager.initialize(renderer, config_data);
+	// Audio
+	if (modules_to_enable.find("Audio") != modules_to_enable.end()) mod_enable_audio();
 
 	// Done with init stuff!
+	
 }
 
 // Gameplay update actions

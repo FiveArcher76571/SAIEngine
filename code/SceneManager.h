@@ -45,8 +45,8 @@ class SceneManager {
 
 public:
 
-	// Initialize SceneManager using info from this game's renderer and game.config
-	void initialize(Renderer &renderer, GameSetup &game_config);
+	// Initialize SceneManager using info from game.config
+	void initialize(GameSetup &game_config);
 
 	//////
 	////// Actor-related functions

@@ -3,8 +3,8 @@
 
 #include "SceneManager.h"
 
-// Initialize SceneManager using info from this game's renderer and game.config
-void SceneManager::initialize(Renderer &renderer, GameSetup &game_config) {
+// Initialize SceneManager using info from game.config
+void SceneManager::initialize(GameSetup &game_config) {
 
 	// Initialize the template manager
 	template_manager.initialize();
@@ -28,13 +28,7 @@ void SceneManager::initialize(Renderer &renderer, GameSetup &game_config) {
 		.endNamespace();
 
 	// Initialize the scene with the given start scene
-	// Also pass in a vec2 for the camera position...
-
-	glm::vec2 new_camera_pos = { 0.0f, 0.0f };
 	switch_scene(game_config.get_initial_scene());
-
-	// Update camera position
-	renderer.SetCameraPos(new_camera_pos.x, new_camera_pos.y, false);
 
 }
 
