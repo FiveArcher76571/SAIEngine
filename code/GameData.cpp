@@ -9,7 +9,7 @@ void GameData::initialize() {
 	// Initialize SDL, throw an error if failed
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 
-		std::cout << "Error: SDL couldn't initialize video!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't initialize video!\n" << SDL_GetError();
 		exit(0);
 
 	}
@@ -17,7 +17,7 @@ void GameData::initialize() {
 	// Initialize SDL Audio too
 	if (!SDL_Init(SDL_INIT_AUDIO)) {
 
-		std::cout << "Error: SDL couldn't initialize audio!\nError:\n" << SDL_GetError();
+		std::cout << "Error: SDL couldn't initialize audio!\n" << SDL_GetError();
 		exit(0);
 
 	}
