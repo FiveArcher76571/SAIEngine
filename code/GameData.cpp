@@ -6,6 +6,13 @@
 // Initialize the engine
 void GameData::initialize() {
 
+	// Initialize the modules map
+	modules["Image"] = false;
+	modules["Text"] = false;
+	modules["Camera"] = false;
+	modules["Input"] = false;
+	modules["Audio"] = false;
+
 	// Get the list of modules to enable from config data
 	rapidjson::Value module_list;
 	
@@ -18,9 +25,11 @@ void GameData::initialize() {
 	// Enable the default modules
 	mod_enable_defaults();
 
-	// Make unordered set from the list of modules
-	std::unordered_set<std::string> modules_to_enable;
-	for (rapidjson::Value::ConstValueIterator mod = module_list.Begin(); mod != module_list.End(); mod++) modules_to_enable.insert(mod->GetString());
+	// Update modules map for the ones to be loaded
+	for (rapidjson::Value::ConstValueIterator mod = module_list.Begin(); mod != module_list.End(); mod++) modules[mod->GetString()] = true;
+
+	// If only defaults are requested, return
+	if (modules.find("Default") != modules.end()) return;
 
 	// Go through and enable given modules...
 
@@ -28,28 +37,28 @@ void GameData::initialize() {
 	bool window_init_done = false;
 
 	// Image (needs window)
-	if (modules_to_enable.find("Image") != modules_to_enable.end()) {
+	if (modules.find("Image") != modules.end()) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_image();
 	}
 
 	// Text (needs window)
-	if (modules_to_enable.find("Text") != modules_to_enable.end()) {
+	if (modules.find("Text") != modules.end()) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_text();
 	}
 
 	// Camera (needs window)
-	if (modules_to_enable.find("Camera") != modules_to_enable.end()) {
+	if (modules.find("Camera") != modules.end()) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_text();
 	}
 
 	// Input
-	if (modules_to_enable.find("Input") != modules_to_enable.end()) mod_enable_image();
+	if (modules.find("Input") != modules.end()) mod_enable_image();
 
 	// Audio
-	if (modules_to_enable.find("Audio") != modules_to_enable.end()) mod_enable_audio();
+	if (modules.find("Audio") != modules.end()) mod_enable_audio();
 
 	// Done with init stuff!
 	
@@ -80,7 +89,7 @@ void GameData::switch_gameplay_scene(const std::string &scene_name) {
 
 }
 
-// Start gameplay loop from a graphical window
+// Start gameplay loop
 void GameData::start() {
 
 	// Initialize the engine
@@ -96,7 +105,7 @@ void GameData::start() {
 		while (SDL_PollEvent(&input)) {
 
 			// Update input for the beginning of frame
-			input_manager.update_states_bof(input);
+			if (modules.at("Input")) input_manager.update_states_bof(input);
 
 			// If we receive a quit event, quit
 			if (input.type == SDL_EVENT_QUIT) game_state = GameState::QUIT;
@@ -106,28 +115,33 @@ void GameData::start() {
 		// Do update actions
 		gameplay_update();
 
-		// Clear the render
-		renderer.clear_render();
+		// Rendering stuff, if those modules are loaded
+		if (modules.at("Image") || modules.at("Text") || modules.at("Camera")) {
 
-		// Process any pending requests in defined order
-		renderer.copy_queued_images();
-		renderer.copy_queued_UI();
-		renderer.copy_queued_text();
-		renderer.copy_queued_pixels();
+			// Clear the render
+			renderer.clear_render();
 
-		// End of frame...
+			// Process any pending requests in defined order
+			renderer.copy_queued_images();
+			renderer.copy_queued_UI();
+			renderer.copy_queued_text();
+			renderer.copy_queued_pixels();
 
-		// Present the render
-		renderer.present_render();
+			// End of frame...
+
+			// Present the render
+			renderer.present_render();
+
+		}
 
 		// Update frame count
 		EngineTools::UpdateFrame();
 
 		// Update keys
-		input_manager.update_states_eof();
+		if (modules.at("Input")) input_manager.update_states_eof();
 
 		// Update pending audio changes
-		audio_manager.update();
+		if (modules.at("Audio")) audio_manager.update();
 
 	}
 

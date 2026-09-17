@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
 #include "GameSetup.h"
 #include "Renderer.h"
 #include "SceneManager.h"
@@ -45,6 +45,9 @@ class GameData {
 
 	// Game state tracker
 	static inline GameState game_state = GameState::GAMEPLAY;
+
+	// Module enable tracker
+	static inline std::unordered_map<std::string, bool> modules;
 
 	/////
 	///// Functions
