@@ -26,16 +26,32 @@ public:
 	// Prints given message to cout
 	static inline void Print(const std::string &message) {
 
+#if defined _WIN32
+
 		std::system("Color 07");
 		std::cout << message << std::endl;
+
+#else
+
+		std::cout << "\033[37m" << message << std::endl;
+
+#endif
 
 	}
 
 	// Prints given message to cout (error)
 	static inline void PrintError(const std::string &message) {
 
+#if defined _WIN32
+
 		std::system("Color 04");
 		std::cout << message << std::endl;
+
+#else
+
+		std::cout << "\033[31m" << message << std::endl;
+
+#endif
 
 	}
 
