@@ -72,7 +72,8 @@ void Renderer::initialize(GameSetup &game_config) {
 
 	}
 
-	// Initialize the text manager
+	// Initialize the text manager if enabled
+	// CHECK LIST
 	text_data.initialize();
 
 }

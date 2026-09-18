@@ -10,7 +10,7 @@ GameSetup::GameSetup() {
 	// If the resources folder doesn't exist in the root directory, throw an error
 	if (!std::filesystem::exists("resources/")) {
 
-		std::cout << "Error: Resources folder (resources/) missing!";
+		std::cout << "Error: Resources folder (resources/) missing!\nCurrent Working Directory: " << std::filesystem::current_path();
 		exit(0);
 
 	}

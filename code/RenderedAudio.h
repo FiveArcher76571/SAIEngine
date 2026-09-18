@@ -45,9 +45,9 @@ class RenderedAudio {
         if (audio_assets.find(filename) != audio_assets.end()) return audio_assets[filename];
 
         // Now, check if the audio directory and the given audio file exist in the filesystem, and throw an error if not
-        if (!std::filesystem::exists("resources/audio/") || (!std::filesystem::exists("resources/audio/" + filename + ".wav") && !std::filesystem::exists("resources/audio/" + filename + ".ogg"))) {
+        if (!std::filesystem::exists("resources/audio/")) {
 
-            std::cout << "Error: couldn't find audio file " << filename << ".wav/.ogg";
+            std::cout << "Error: couldn't find audio file " << filename;
             return new_audio;
 
         }
@@ -56,7 +56,6 @@ class RenderedAudio {
 
         // Check the file extension for .wav or .ogg, and update the filename acordingly
         std::string full_file = "resources/audio/" + filename;
-        full_file += std::filesystem::exists("resources/audio/" + filename + ".wav") ? ".wav" : ".ogg";
 
         // Load the audio file into the intro BGM Mix_Chunk pointer
         new_audio = MIX_LoadAudio(mixer, full_file.c_str(), false);
