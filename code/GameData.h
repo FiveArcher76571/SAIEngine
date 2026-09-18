@@ -96,9 +96,6 @@ class GameData {
 			.addFunction("GetName", &SceneManager::GetCurrentScene)
 			.endNamespace();
 
-		// Initialize the scene manager
-		scene_manager.initialize(config_data);
-
 	}
 
 	// Enable window module (+renderer)

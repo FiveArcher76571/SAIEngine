@@ -37,28 +37,34 @@ void GameData::initialize() {
 	bool window_init_done = false;
 
 	// Image (needs window)
-	if (modules.find("Image") != modules.end()) {
+	if (modules.at("Image")) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_image();
 	}
 
 	// Text (needs window)
-	if (modules.find("Text") != modules.end()) {
+	if (modules.at("Text")) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_text();
 	}
 
 	// Camera (needs window)
-	if (modules.find("Camera") != modules.end()) {
+	if (modules.at("Camera")) {
 		if (!window_init_done) mod_enable_window();
 		mod_enable_text();
 	}
 
 	// Input
-	if (modules.find("Input") != modules.end()) mod_enable_image();
+	if (modules.at("Input")) {
+		if (!window_init_done) mod_enable_window();
+		mod_enable_input();
+	}
 
 	// Audio
-	if (modules.find("Audio") != modules.end()) mod_enable_audio();
+	if (modules.at("Audio")) mod_enable_audio();
+
+	// Finally, initialize the scene manager
+	scene_manager.initialize(config_data);
 
 	// Done with init stuff!
 	
